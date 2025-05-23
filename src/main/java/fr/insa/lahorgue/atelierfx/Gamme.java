@@ -4,6 +4,8 @@
  */
 package fr.insa.lahorgue.atelierfx;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +17,13 @@ public class Gamme {
     private String RefGamme;
     private ArrayList<Operation> ListeOperations;
     private ArrayList<Equipement> ListeEquipements;
-    //Constructeur
+   
+   private static BufferedReader reader = null;
+   private static String cheminacces;
+  
+   
+    
+//Constructeur
 
     public Gamme(String RefGamme, ArrayList<Operation> ListeOperations, ArrayList<Equipement> ListeEquipements) {
         this.RefGamme = RefGamme;
@@ -23,6 +31,14 @@ public class Gamme {
         this.ListeEquipements = ListeEquipements;
     }
     //Getters
+
+    public static String getCheminacces() {
+        return cheminacces;
+    }
+
+    public static BufferedReader getReader() {
+        return reader;
+    }
 
     public String getRefGamme() {
         return RefGamme;
@@ -36,6 +52,14 @@ public class Gamme {
         return ListeEquipements;
     }
     //Setters
+
+    public static void setCheminacces(String cheminacces) {
+        Gamme.cheminacces = cheminacces;
+    }
+
+    public static void setReader(BufferedReader reader) {
+        Gamme.reader = reader;
+    }
 
     public void setRefGamme(String RefGamme) {
         this.RefGamme = RefGamme;
@@ -51,13 +75,15 @@ public class Gamme {
     //Méthodes
      //Méthodes de gestion
       public static void CreerGamme(String RefGamme, ArrayList<Operation> ListeOperations, ArrayList<Equipement> ListeEquipements){
-      //copier le constructeur ?
+        cheminacces = "Gammes.txt";
+        reader = new BufferedReader(new FileReader(cheminacces));
+
       }
     public void modifierGamme(){
         //ouvrir une interface permettant de modifier le contenu des gammes 
     }    
     public void supprimerGamme() {
-        //???
+          
     }
     public void AfficheGamme(Gamme GammeAff) {
         System.out.println(GammeAff.getRefGamme());
