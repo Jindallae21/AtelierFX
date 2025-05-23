@@ -14,6 +14,6 @@ public class Atelier {
     
         public static void main(String[] args) throws IOException {
         Fiabilitetest rapportfiabilite = new Fiabilitetest();
-        rapportfiabilite.RapportFiabilite(rapportfiabilite);
+        rapportfiabilite.RapportFiabilite();
         }
 }

@@ -36,7 +36,7 @@ public class Fiabilitetest {
     }
 
     //Méthodes
-    public void RapportFiabilite(Fiabilitetest fiabilite) throws IOException {
+    public void RapportFiabilite() throws IOException {
         try {
             cheminacces = "SuiviMaintenance.txt";
             reader = new BufferedReader(new FileReader(cheminacces));
