@@ -11,13 +11,12 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Atelier de Fabrication");
-
         // === MenuBar ===
         MenuBar menuBar = new MenuBar();
 
@@ -31,7 +30,6 @@ public class App extends Application {
         MenuItem menuItem2 = new MenuItem("Modifier");
         MenuItem menuItem3 = new MenuItem("Supprimer");
         MenuItem menuItem4 = new MenuItem("Afficher");
-
         menuBar.getMenus().addAll(menu1, menu2, menu3, menu4, menu5);
 
         SeparatorMenuItem separator = new SeparatorMenuItem();
