@@ -25,17 +25,21 @@ public class App extends Application {
         Menu menu2 = new Menu("Poste");
         Menu menu3 = new Menu("Produit");
         Menu menu4 = new Menu("Gamme");
+        Menu menu5 = new Menu("Rapport de Fiabilite");
 
         MenuItem menuItem1 = new MenuItem("Ajouter");
         MenuItem menuItem2 = new MenuItem("Modifier");
         MenuItem menuItem3 = new MenuItem("Supprimer");
         MenuItem menuItem4 = new MenuItem("Afficher");
 
-        menuBar.getMenus().addAll(menu1, menu2, menu3, menu4);
+        menuBar.getMenus().addAll(menu1, menu2, menu3, menu4, menu5);
 
         SeparatorMenuItem separator = new SeparatorMenuItem();
 
-        menu1.getItems().addAll(menuItem1, separator, menuItem2, separator, menuItem3, separator, menuItem4);
+        menu1.getItems().add(menuItem1);
+        menu1.getItems().add(menuItem2);
+        menu1.getItems().add(menuItem3);
+        menu1.getItems().add(menuItem4);
         menuItem1.setOnAction(e -> System.out.println("Ajouter une Machine"));
         menuItem2.setOnAction(e -> System.out.println("Modifier une Machine"));
 
