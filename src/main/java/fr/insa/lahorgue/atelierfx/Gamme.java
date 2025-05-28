@@ -5,6 +5,7 @@
 package fr.insa.lahorgue.atelierfx;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
@@ -75,8 +76,11 @@ public class Gamme {
     //Méthodes
      //Méthodes de gestion
       public static void CreerGamme(String RefGamme, ArrayList<Operation> ListeOperations, ArrayList<Equipement> ListeEquipements){
-        cheminacces = "Gammes.txt";
+        try {cheminacces = "Gammes.txt";
         reader = new BufferedReader(new FileReader(cheminacces));
+        } catch(FileNotFoundException e ) {
+           System.out.println("Erreur : fichier non trouvé");
+        }
 
       }
     public void modifierGamme(){
