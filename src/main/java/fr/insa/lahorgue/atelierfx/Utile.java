@@ -18,7 +18,7 @@ import java.util.List;
 public class Utile {
     
     
-     public static List<List<String>> importerMémoireMachine (String fichier) throws IOException{
+    public static List<List<String>> importerMemoire (String fichier) throws IOException{
             
            List<List<String>> tableau = new ArrayList<>();
            
