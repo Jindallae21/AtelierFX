@@ -1,12 +1,9 @@
 package fr.insa.lahorgue.atelierfx;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
-/**
- * Classe Machine qui hérite d'Equipement.
- * Représente une machine positionnée dans l'atelier.
- */
 public class Machine extends Equipement {
 
     private String type;
@@ -20,7 +17,7 @@ public class Machine extends Equipement {
         this.y = y;
     }
 
-    // Getters et Setters
+    // Getters et setters
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
@@ -30,16 +27,71 @@ public class Machine extends Equipement {
     public float getY() { return y; }
     public void setY(float y) { this.y = y; }
 
-    public String getRefMachine() { return this.refEquipement; }
-    public String getDMachine() { return this.dEquipement; }
+    // Renommage getters pour cohérence (hérité de Equipement)
 
-    public static float CalculCout(Machine machine) {
-        // Placeholder : tu peux remplacer cette logique par une vraie formule métier
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String getRefEquipement() { return this.refEquipement; }
+    public String getDesignation() { return this.dEquipement; }
+
+    /**
+     * Calcul du coût : méthode métier placeholder.
+     * @param machine
+     * @return 
+     */
+    public static float calculCout(Machine machine) {
         return machine.getCout();
     }
-    
-     public static List<List<String>> chargerMachinesDepuisFichier() throws IOException {
-        return Utile.importerMemoire("fr/insa/lahorgue/atelierfx/machine.txt");
+
+    /**
+     * Charge les machines depuis le fichier (ressource).
+     * @return 
+     * @throws java.io.IOException
+     */
+    public static List<List<String>> chargerMachinesDepuisFichier() throws IOException {
+        return Utile.importerMemoire("/fr/insa/lahorgue/atelierfx/machine.txt");
     }
-    
+
+    public List<String> toList() {
+    return Arrays.asList(
+        getRefEquipement(),
+        getDesignation(),
+        getType(),
+        String.valueOf(getX()),
+        String.valueOf(getY()),
+        String.valueOf(getCout())
+    );
+}
+
+    /**
+     * Enregistre la machine dans un fichier donné, au format texte (virgules).
+     * @param cheminFichier
+     * @throws java.io.IOException
+     */
+    public void enregistrerDansFichier(String cheminFichier) throws IOException {
+        List<String> champs = Arrays.asList(
+            getRefEquipement(),
+            getDesignation(),
+            getType(),
+            String.valueOf(getX()),
+            String.valueOf(getY()),
+            String.valueOf(getCout())
+        );
+        Utile.ajouterLigne(cheminFichier, champs);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String toString() {
+        return String.format("Machine[ref=%s, desi=%s, type=%s, x=%.2f, y=%.2f, cout=%.2f]",
+                getRefEquipement(), getDesignation(), getType(), getX(), getY(), getCout());
+    }
+  
+
 }
