@@ -8,8 +8,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -42,4 +45,20 @@ public class Utile {
     return tableau;    
     }
 
+    
+    public static void supprimerLigne(String cheminFichier, String texteCible) throws IOException {
+        Path path = Path.of(cheminFichier);
+
+        // Lire toutes les lignes
+        List<String> lignes = Files.readAllLines(path);
+
+        // Filtrer pour ne garder que les lignes qui ne contiennent pas le texte cible
+        List<String> lignesFiltrees;
+        lignesFiltrees = lignes.stream()
+                .filter(ligne -> !ligne.contains(texteCible))
+                .collect(Collectors.toList());
+
+        // Réécrire le fichier avec les lignes filtrées
+        Files.write(path, lignesFiltrees);
+    }
 }
