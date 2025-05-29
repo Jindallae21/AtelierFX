@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class App extends Application {
@@ -88,26 +89,42 @@ public class App extends Application {
         suppressionBox.setAlignment(Pos.CENTER);
         suppressionBox.setVisible(false);
 
+        // Zone pour modification
+        TextField tfRefModif = new TextField();
+        tfRefModif.setPromptText("Référence machine à modifier");
+        tfRefModif.setStyle(textFieldStyle);
+
+        Button btnChargerModif = new Button("Charger");
+        btnChargerModif.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        VBox formModifBox = new VBox(10, tfRefModif, btnChargerModif, formBox);
+        formModifBox.setAlignment(Pos.CENTER);
+        formModifBox.setStyle("-fx-padding: 20;");
+        formModifBox.setVisible(false);
+
         VBox affichageBox = new VBox(10, scrollPane, suppressionBox);
         affichageBox.setAlignment(Pos.CENTER);
         affichageBox.setStyle("-fx-padding: 20;");
+        affichageBox.setVisible(false);
 
         MenuBar menuBar = new MenuBar();
         Menu menu1 = new Menu("Machine");
         Menu menufiable = new Menu("Rapport de fiabilité");
         MenuItem menuItem1 = new MenuItem("Ajouter");
         MenuItem menuItemAfficherSupprimer = new MenuItem("Afficher/Supprimer");
-        menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimer);
+        MenuItem menuItemModifier = new MenuItem("Afficher/Modifier");
+
+        menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimer, menuItemModifier);
         menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"), menufiable);
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox topBar = new HBox(menuBar, spacer);
+        // Suppression du bouton X et spacer
+        HBox topBar = new HBox(menuBar);
         topBar.setAlignment(Pos.CENTER_LEFT);
         topBar.setStyle("-fx-padding: 5px;");
 
         menuItem1.setOnAction(e -> {
             formBox.setVisible(true);
+            formModifBox.setVisible(false);
             affichageBox.setVisible(false);
             labelMessage.setText("");
         });
@@ -115,46 +132,55 @@ public class App extends Application {
         // Action du bouton rapport de fiabilité
         Fiabilite instancefiable = new Fiabilite();
 
-        // Construire le rapport de fiabilité
-        List<String> newhome = instancefiable.RapportFiabilite(instancefiable);
+        ArrayList<String> newhome = new ArrayList<>(instancefiable.RapportFiabilite(instancefiable));
         StringBuilder rapportfinal = new StringBuilder();
         for (String ligne : newhome) {
             rapportfinal.append(ligne).append("\n");
         }
         Label labelfiable1 = new Label("Lecture du fichier SuiviMaintenance.txt\nRécupération des données du fichier\nCalcul des fiabilités de chaque machine\nClassement des machines...");
         Label labelfiable2 = new Label(rapportfinal.toString());
-        VBox boitefiable = new VBox(50, scrollPane, suppressionBox);
-        boitefiable.getChildren().addAll(labelfiable1, labelfiable2);
+        VBox boitefiable = new VBox(50, labelfiable1, labelfiable2);
         boitefiable.setAlignment(Pos.CENTER);
         StackPane stackfiable = new StackPane(boitefiable);
 
         menufiable.setOnAction(e -> {
-            scrollPane.setVisible(true);
+            BorderPane root = (BorderPane) primaryStage.getScene().getRoot();
+            root.setCenter(stackfiable);
         });
 
         menuItemAfficherSupprimer.setOnAction(e -> {
             formBox.setVisible(false);
+            formModifBox.setVisible(false);
             affichageBox.setVisible(true);
             scrollPane.setVisible(true);
             ligneContainer.getChildren().clear();
 
             try {
                 List<Machine> machines = Machine.chargerMachinesDepuisFichier(cheminFichier);
+
                 for (Machine machine : machines) {
                     HBox ligneHBox = new HBox(20);
-                    ligneHBox.getChildren().addAll(
-                        new Label(machine.getRefEquipement()),
-                        new Label(machine.getDesignation()),
-                        new Label(machine.getType()),
-                        new Label(String.valueOf(machine.getX())),
-                        new Label(String.valueOf(machine.getY())),
-                        new Label(String.valueOf(machine.getCout()))
-                    );
+
+                    Label labelRef = new Label(machine.getRefEquipement());
+                    Label labelDesi = new Label(machine.getDesignation());
+                    Label labelType = new Label(machine.getType());
+                    Label labelX = new Label(String.valueOf(machine.getX()));
+                    Label labelY = new Label(String.valueOf(machine.getY()));
+                    Label labelCout = new Label(String.valueOf(machine.getCout()));
+
+                    labelRef.setMinWidth(150);
+                    labelDesi.setMinWidth(150);
+                    labelType.setMinWidth(150);
+                    labelX.setMinWidth(100);
+                    labelY.setMinWidth(100);
+                    labelCout.setMinWidth(100);
+
+                    ligneHBox.getChildren().addAll(labelRef, labelDesi, labelType, labelX, labelY, labelCout);
                     ligneContainer.getChildren().add(ligneHBox);
                 }
                 suppressionBox.setVisible(true);
             } catch (IOException ex) {
-                ligneContainer.getChildren().add(new Label("Erreur lors de la lecture du fichier."));
+                ligneContainer.getChildren().add(new Label("Erreur lors de la lecture du fichier : " + ex.getMessage()));
             }
         });
 
@@ -171,6 +197,51 @@ public class App extends Application {
             }
         });
 
+        menuItemModifier.setOnAction(e -> {
+            affichageBox.setVisible(false);
+            formBox.setVisible(false);
+            formModifBox.setVisible(true);
+            labelMessage.setText("");
+        });
+
+        btnChargerModif.setOnAction(e -> {
+            String refCible = tfRefModif.getText().trim();
+            if (!refCible.isEmpty()) {
+                try {
+                    List<Machine> machines = Machine.chargerMachinesDepuisFichier(cheminFichier);
+                    Machine machineTrouvee = null;
+                    for (Machine m : machines) {
+                        if (m.getRefEquipement().equals(refCible)) {
+                            machineTrouvee = m;
+                            break;
+                        }
+                    }
+                    if (machineTrouvee != null) {
+                        // Remplir les champs avec les valeurs trouvées
+                        tfRefMachine.setText(machineTrouvee.getRefEquipement());
+                        tfDesiMachine.setText(machineTrouvee.getDesignation());
+                        tfTypeMachine.setText(machineTrouvee.getType());
+                        tfXMachine.setText(String.valueOf(machineTrouvee.getX()));
+                        tfYMachine.setText(String.valueOf(machineTrouvee.getY()));
+                        tfCout.setText(String.valueOf(machineTrouvee.getCout()));
+                        labelMessage.setText("Machine chargée, modifiez les champs et cliquez sur Valider.");
+                        formBox.setVisible(true);
+                    } else {
+                        labelMessage.setStyle("-fx-text-fill: red;");
+                        labelMessage.setText("Référence machine non trouvée.");
+                        formBox.setVisible(false);
+                    }
+                } catch (IOException ex) {
+                    labelMessage.setStyle("-fx-text-fill: red;");
+                    labelMessage.setText("Erreur lecture fichier : " + ex.getMessage());
+                    formBox.setVisible(false);
+                }
+            } else {
+                labelMessage.setStyle("-fx-text-fill: red;");
+                labelMessage.setText("Veuillez entrer une référence.");
+            }
+        });
+
         valider.setOnAction(e -> {
             try {
                 String refEquipement = tfRefMachine.getText().trim();
@@ -183,21 +254,47 @@ public class App extends Application {
                 Machine machine = new Machine(refEquipement, dEquipement, type, x, y);
                 machine.setCout(cout);
 
-                // Ajout dans le fichier via la méthode générique Utile
-                Utile.ajouterLigne(cheminFichier, machine.toList());
+                // Vérifier si la machine existe déjà
+                List<Machine> machines = Machine.chargerMachinesDepuisFichier(cheminFichier);
+                boolean existe = false;
+                for (Machine m : machines) {
+                    if (m.getRefEquipement().equals(refEquipement)) {
+                        existe = true;
+                        break;
+                    }
+                }
 
-                labelMessage.setStyle("-fx-text-fill: green;");
-                labelMessage.setText("Machine ajoutée avec succès.");
+                if (existe) {
+                    // Modifier la machine dans le fichier (remplacer ligne)
+                    // On va utiliser une méthode Utile.modifierElement pour chaque colonne
+                    // Format fichier : ref;designation;type;x;y;cout
 
-                // Reset formulaire
+                    Utile.modifierElement(cheminFichier, refEquipement, 0, refEquipement);
+                    Utile.modifierElement(cheminFichier, refEquipement, 1, dEquipement);
+                    Utile.modifierElement(cheminFichier, refEquipement, 2, type);
+                    Utile.modifierElement(cheminFichier, refEquipement, 3, String.valueOf(x));
+                    Utile.modifierElement(cheminFichier, refEquipement, 4, String.valueOf(y));
+                    Utile.modifierElement(cheminFichier, refEquipement, 5, String.valueOf(cout));
+
+                    labelMessage.setStyle("-fx-text-fill: green;");
+                    labelMessage.setText("Machine modifiée avec succès.");
+                } else {
+                    // Ajouter la nouvelle machine
+                    Utile.ajouterLigne(cheminFichier, machine.toList());
+                    labelMessage.setStyle("-fx-text-fill: green;");
+                    labelMessage.setText("Machine ajoutée avec succès.");
+                }
+
+                // Reset formulaire et cacher la zone modif
                 tfRefMachine.clear();
                 tfDesiMachine.clear();
                 tfTypeMachine.clear();
                 tfXMachine.clear();
                 tfYMachine.clear();
                 tfCout.clear();
-
+                tfRefModif.clear();
                 formBox.setVisible(false);
+                formModifBox.setVisible(false);
 
             } catch (NumberFormatException ex) {
                 labelMessage.setStyle("-fx-text-fill: red;");
@@ -215,28 +312,26 @@ public class App extends Application {
             tfXMachine.clear();
             tfYMachine.clear();
             tfCout.clear();
+            tfRefModif.clear();
             labelMessage.setText("");
             formBox.setVisible(false);
+            formModifBox.setVisible(false);
         });
 
-        VBox mainContent = new VBox(20, formBox, affichageBox, boitefiable);
+        VBox mainContent = new VBox(20, formModifBox, affichageBox);
         mainContent.setAlignment(Pos.CENTER);
 
         BorderPane root = new BorderPane();
         root.setTop(topBar);
         root.setCenter(mainContent);
 
-        Scene scene = new Scene(root, 960, 600);
+        Scene scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
-
-        // Ouvrir en plein écran
         primaryStage.setMaximized(true);
-
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch(args);
+        launch();
     }
 }
-
