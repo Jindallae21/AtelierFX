@@ -26,6 +26,15 @@ public class App extends Application {
         champTexteMachine.setVisible(false);
         
         
+        Button valider = new Button("Valider");
+        valider.setOnAction(e -> {
+        System.out.println(champTexteMachine.getText());
+        champTexteMachine.clear(); // vide le champ
+        champTexteMachine.setVisible(false); // le masque à nouveau
+        valider.setVisible(false);
+        });
+        valider.setVisible(false);
+        
         Menu menu1 = new Menu("Machine");
         Menu menu2 = new Menu("Poste");
         Menu menu3 = new Menu("Produit");
@@ -47,11 +56,19 @@ public class App extends Application {
 
         SeparatorMenuItem separator = new SeparatorMenuItem();
 
+        //Vbox de menuItem4
+        VBox layout = new VBox(10, labelItem4, champTexteMachine, valider);
+        layout.setAlignment(Pos.CENTER);
+
+        
         menu1.getItems().add(menuItem1);
         menu1.getItems().add(menuItem2);
         menu1.getItems().add(menuItem3);
         menu1.getItems().add(menuItem4);
-        menuItem1.setOnAction(e -> champTexteMachine.setVisible(true));
+        menuItem1.setOnAction(e -> {
+            champTexteMachine.setVisible(true);
+            valider.setVisible(true);
+        });
         menuItem2.setOnAction(e -> System.out.println("Modifier une Machine"));
         menuItem3.setOnAction(e -> System.out.println("Supprimer une Machine"));
         
@@ -67,17 +84,6 @@ public class App extends Application {
         menuItem6.setOnAction(e -> System.out.println("Modifier une Gamme"));
 
         
-        Button valider = new Button("Valider");
-        valider.setOnAction(e -> {
-        System.out.println("Texte entré : " + champTexteMachine.getText());
-        champTexteMachine.clear(); // vide le champ
-        champTexteMachine.setVisible(false); // le masque à nouveau
-});
- 
-        //Vbox de menuItem4
-        VBox afficher = new VBox(10, labelItem4, champTexteMachine, valider);
-        afficher.setAlignment(Pos.CENTER);
-
         
          // === Bouton de fermeture ===
         Button closeButton = new Button("X");
@@ -95,7 +101,7 @@ public class App extends Application {
         // === Layout principal ===
         BorderPane root = new BorderPane();
         root.setTop(topBar);
-        root.setCenter(afficher);
+        root.setCenter(layout);
         
         
         Scene scene = new Scene(root, 960, 600);
