@@ -92,6 +92,7 @@ public class App extends Application {
         VBox affichageBox = new VBox(10, scrollPane, suppressionBox);
         affichageBox.setAlignment(Pos.CENTER);
         affichageBox.setStyle("-fx-padding: 20;");
+        affichageBox.setVisible(false);
 
         MenuBar menuBar = new MenuBar();
         Menu menu1 = new Menu("Machine");
@@ -99,7 +100,7 @@ public class App extends Application {
         MenuItem menuItem1 = new MenuItem("Ajouter");
         MenuItem menuItemAfficherSupprimer = new MenuItem("Afficher/Supprimer");
         menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimer);
-        menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"),menufiable);
+        menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"), menufiable);
 
         Button closeButton = new Button("X");
         closeButton.setStyle("-fx-font-size: 16px; -fx-background-color: red; -fx-text-fill: white;");
@@ -115,24 +116,26 @@ public class App extends Application {
             affichageBox.setVisible(false);
             labelMessage.setText("");
         });
-        
-        //action du bouton rapport de fiabilite
+
+        // Action du bouton rapport de fiabilité
         Fiabilite instancefiable = new Fiabilite();
 
-               ArrayList<String> newhome = new ArrayList<String>(instancefiable.RapportFiabilite(instancefiable));
-            String rapportfinal = "";
-            int i;
-            for (i=0;i<newhome.size();i++){
-                rapportfinal = rapportfinal+newhome.get(i)+"\n"; 
-            }
-        Label labelfiable1 = new Label("Lecture du fichier SuiviMaintenance.txt\nRécupération des données du fichier\nCalcul des fiabilités de chaque machine\nClasemment des machines...");
-        Label labelfiable2 = new Label(rapportfinal);
-            VBox boitefiable = new VBox(50, scrollPane, suppressionBox);
-            boitefiable.getChildren().addAll(labelfiable1, labelfiable2);
-            boitefiable.setAlignment(Pos.CENTER);
-            StackPane stackfiable = new StackPane(boitefiable); 
+        ArrayList<String> newhome = new ArrayList<>(instancefiable.RapportFiabilite(instancefiable));
+        StringBuilder rapportfinal = new StringBuilder();
+        for (String ligne : newhome) {
+            rapportfinal.append(ligne).append("\n");
+        }
+        Label labelfiable1 = new Label("Lecture du fichier SuiviMaintenance.txt\nRécupération des données du fichier\nCalcul des fiabilités de chaque machine\nClassement des machines...");
+        Label labelfiable2 = new Label(rapportfinal.toString());
+        VBox boitefiable = new VBox(50, labelfiable1, labelfiable2);
+        boitefiable.setAlignment(Pos.CENTER);
+        StackPane stackfiable = new StackPane(boitefiable);
+
         menufiable.setOnAction(e -> {
-            scrollPane.setVisible(true);
+            // Affiche le rapport de fiabilité dans une nouvelle fenêtre ou remplace le centre ?
+            // Ici on remplace le centre par le rapport :
+            BorderPane root = (BorderPane) primaryStage.getScene().getRoot();
+            root.setCenter(stackfiable);
         });
 
         menuItemAfficherSupprimer.setOnAction(e -> {
@@ -142,19 +145,32 @@ public class App extends Application {
             ligneContainer.getChildren().clear();
 
             try {
-                List<List<String>> lignes = Machine.chargerMachinesDepuisFichier();
-                for (List<String> ligne : lignes) {
+                // Charger la liste des machines depuis le fichier
+                List<Machine> machines = Machine.chargerMachinesDepuisFichier(cheminFichier);
+
+                for (Machine machine : machines) {
                     HBox ligneHBox = new HBox(20);
-                    for (String cellule : ligne) {
-                        Label label = new Label(cellule);
-                        label.setMinWidth(150);
-                        ligneHBox.getChildren().add(label);
-                    }
+
+                    Label labelRef = new Label(machine.getRefEquipement());
+                    Label labelDesi = new Label(machine.getDesignation());
+                    Label labelType = new Label(machine.getType());
+                    Label labelX = new Label(String.valueOf(machine.getX()));
+                    Label labelY = new Label(String.valueOf(machine.getY()));
+                    Label labelCout = new Label(String.valueOf(machine.getCout()));
+
+                    labelRef.setMinWidth(150);
+                    labelDesi.setMinWidth(150);
+                    labelType.setMinWidth(150);
+                    labelX.setMinWidth(100);
+                    labelY.setMinWidth(100);
+                    labelCout.setMinWidth(100);
+
+                    ligneHBox.getChildren().addAll(labelRef, labelDesi, labelType, labelX, labelY, labelCout);
                     ligneContainer.getChildren().add(ligneHBox);
                 }
                 suppressionBox.setVisible(true);
             } catch (IOException ex) {
-                ligneContainer.getChildren().add(new Label("Erreur lors de la lecture du fichier."));
+                ligneContainer.getChildren().add(new Label("Erreur lors de la lecture du fichier : " + ex.getMessage()));
             }
         });
 
@@ -219,20 +235,19 @@ public class App extends Application {
             formBox.setVisible(false);
         });
 
-        VBox mainContent = new VBox(20, formBox, affichageBox, boitefiable);
+        VBox mainContent = new VBox(20, formBox, affichageBox);
         mainContent.setAlignment(Pos.CENTER);
 
         BorderPane root = new BorderPane();
         root.setTop(topBar);
         root.setCenter(mainContent);
 
-        Scene scene = new Scene(root, 960, 600);
+        Scene scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch(args);
+        launch();
     }
 }
