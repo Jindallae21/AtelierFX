@@ -10,9 +10,9 @@ package fr.insa.lahorgue.atelierfx;
  */
 public class Equipement {
     //attributs
-    private String refEquipement;
-    private String dEquipement;
-    private float cout;
+    public String refEquipement;
+    public String dEquipement;
+    public float cout;
     //Note : la méthode de calcul du coût sera définie par une méthode, qu'il sera possible de redéfinir dans les sous-classes Machine et Equipement !
     //Constructeur
     public Equipement(String refEquipement, String dEquipement) {
