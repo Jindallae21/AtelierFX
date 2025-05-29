@@ -23,8 +23,8 @@ public class App extends Application {
         Label labelItem4 = new Label();
         
         TextField champTexteMachine = new TextField();
+        champTexteMachine.setVisible(false);
         
-        String texte = champTexteMachine.getText();
         
         Menu menu1 = new Menu("Machine");
         Menu menu2 = new Menu("Poste");
@@ -51,7 +51,7 @@ public class App extends Application {
         menu1.getItems().add(menuItem2);
         menu1.getItems().add(menuItem3);
         menu1.getItems().add(menuItem4);
-        menuItem1.setOnAction(e -> System.out.println("Tu as écrit : " + texte));
+        menuItem1.setOnAction(e -> champTexteMachine.setVisible(true));
         menuItem2.setOnAction(e -> System.out.println("Modifier une Machine"));
         menuItem3.setOnAction(e -> System.out.println("Supprimer une Machine"));
         
@@ -67,15 +67,17 @@ public class App extends Application {
         menuItem6.setOnAction(e -> System.out.println("Modifier une Gamme"));
 
         
-        
+        Button valider = new Button("Valider");
+        valider.setOnAction(e -> {
+        System.out.println("Texte entré : " + champTexteMachine.getText());
+        champTexteMachine.clear(); // vide le champ
+        champTexteMachine.setVisible(false); // le masque à nouveau
+});
  
         //Vbox de menuItem4
-         VBox afficher = new VBox(10, labelItem4);
+        VBox afficher = new VBox(10, labelItem4, champTexteMachine, valider);
         afficher.setAlignment(Pos.CENTER);
 
-        //Vbox de MenuItem1
-        VBox Supprimer = new VBox(10, champTexteMachine, menuItem1);
-        
         
          // === Bouton de fermeture ===
         Button closeButton = new Button("X");
