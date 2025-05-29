@@ -3,18 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package fr.insa.lahorgue.atelierfx;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  *
  * @author phupka01
  */
-public class Machine extends Equipement {
-    private String refMachine;
-    private String dMachine;
+public class Machine extends Equipement {   
     private String type;
     private float x;
     private float y;
-    private float cout;
+
 
     
     //Getters et Setter
@@ -78,7 +80,7 @@ public class Machine extends Equipement {
     
     //Constructeur
 
-    public Machine(String refMachine, String dMachine, String type, float x, float y, String refEquipement, String dEquipement) {
+    public Machine(String refMachine, String dMachine, String type, float x, float y) {
         super(refEquipement, dEquipement);
         this.refMachine = refMachine;
         this.dMachine = dMachine;
@@ -92,7 +94,7 @@ public class Machine extends Equipement {
         //écrire ici la méthode de calcul du cout d'une machine
     }
     
-    }
+}
     
     
 

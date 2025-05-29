@@ -18,7 +18,28 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Atelier de Fabrication");
        
+        //INSTAURATION DES CLASSES EXTERNES
+       
+        TextField tfRefMachine = new TextField();
+        tfRefMachine.setPromptText("Référence Machine");
+        
+        TextField tfDesiMachine = new TextField();
+        tfDesiMachine.setPromptText("Designation Machine");
+        
+        TextField tfTypeMachine = new TextField();
+        tfTypeMachine.setPromptText("Type de Machine");
+
+        TextField tfXMachine = new TextField();
+        tfXMachine.setPromptText("X Machine");
+
+        TextField tfYMachine = new TextField();
+        tfYMachine.setPromptText("Y Machine");
+
+        
+        
+        
         MenuBar menuBar = new MenuBar();
+        
         
         Label labelItem4 = new Label();
         
@@ -26,14 +47,9 @@ public class App extends Application {
         champTexteMachine.setVisible(false);
         
         
-        Button valider = new Button("Valider");
-        valider.setOnAction(e -> {
-        System.out.println(champTexteMachine.getText());
-        champTexteMachine.clear(); // vide le champ
-        champTexteMachine.setVisible(false); // le masque à nouveau
-        valider.setVisible(false);
-        });
-        valider.setVisible(false);
+       
+         Label labelItem4 = new Label();
+
         
         Menu menu1 = new Menu("Machine");
         Menu menu2 = new Menu("Poste");
@@ -56,17 +72,40 @@ public class App extends Application {
 
         SeparatorMenuItem separator = new SeparatorMenuItem();
 
-        //Vbox de menuItem4
-        VBox layout = new VBox(10, labelItem4, champTexteMachine, valider);
-        layout.setAlignment(Pos.CENTER);
-
+        //Vbox de la zone de saisie
+        VBox formBox = new VBox(10, tfRefMachine, tfDesiMachine, tfTypeMachine, tfXMachine, tfYMachine, valider);
+        formBox.setAlignment(Pos.BASELINE_CENTER);
+        formBox.setVisible(false);
+        
+        
+        Button valider = new Button("Valider");
+        valider.setOnAction(e -> {
+            try{
+                String refEquipement = tfRefMachine.getText();
+                String dEquipement = tfDesiMachine.getText();
+                String type = tfTypeMachine.getText();
+                float x = tfXMachine.getText();
+                float y = tfYMachine.getText();
+                
+                Machine machine = new Machine(refEquipement, dEquipement, type, x, y);
+                System.out.println("Machine cree : "+machine.getRefMachine());
+                
+                tfRefMachine.clear(); tfDesiMachine.clear(); tfTypeMachine.clear(); tfXMachine.clear(); tfYMachine.clear();  // vider les champs
+                formBox.setVisible(false); // masquer toutes les zones de saisie
+            } catch (NumberFormatException ex){
+                System.out.println("Erreur de saisie");
+            }
+        valider.setVisible(false);
+        });
+        
+        
         
         menu1.getItems().add(menuItem1);
         menu1.getItems().add(menuItem2);
         menu1.getItems().add(menuItem3);
         menu1.getItems().add(menuItem4);
         menuItem1.setOnAction(e -> {
-            champTexteMachine.setVisible(true);
+            formBox.setVisible(true);
             valider.setVisible(true);
         });
         menuItem2.setOnAction(e -> System.out.println("Modifier une Machine"));
@@ -83,7 +122,14 @@ public class App extends Application {
         menuItem5.setOnAction(e -> System.out.println("Ajouter une Gamme"));
         menuItem6.setOnAction(e -> System.out.println("Modifier une Gamme"));
 
+        /*<<<<<<< HEAD
         
+        =======*/
+        //Vbox de menuItem4
+         VBox afficher = new VBox(10, labelItem4);
+        afficher.setAlignment(Pos.CENTER);
+
+        //>>>>>>> origin/master
         
          // === Bouton de fermeture ===
         Button closeButton = new Button("X");
@@ -101,7 +147,11 @@ public class App extends Application {
         // === Layout principal ===
         BorderPane root = new BorderPane();
         root.setTop(topBar);
+        /*<<<<<<< HEAD*/
         root.setCenter(layout);
+        /*=======*/        
+        root.setCenter(afficher);
+/*>>>>>>> origin/master*/
         
         
         Scene scene = new Scene(root, 960, 600);

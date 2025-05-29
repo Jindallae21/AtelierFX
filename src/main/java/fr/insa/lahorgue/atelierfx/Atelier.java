@@ -13,7 +13,7 @@ import java.io.IOException;
 public class Atelier {
     
         public static void main(String[] args) throws IOException {
-        Fiabilitetest rapportfiabilite = new Fiabilitetest();
-        rapportfiabilite.RapportFiabilite();
+        Fiabilite rapportfiabilite = new Fiabilite();
+        rapportfiabilite.RapportFiabilite(rapportfiabilite);
         }
 }
