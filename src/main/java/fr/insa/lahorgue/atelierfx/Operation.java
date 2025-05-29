@@ -1,36 +1,25 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package fr.insa.lahorgue.atelierfx;
 
-/**
- *
- * @author phupka01
- */
 public class Operation {
     private String refOperation;
-    private String dOperation;
+    private String designation;
     private String refEquipement;
     private float dureeOperation;
-    
-        //Constructeur
 
-    public Operation(String refOperation, String dOperation, String refEquipement, float dureeOperation) {
+    public Operation(String refOperation, String designation, String refEquipement, float dureeOperation) {
         this.refOperation = refOperation;
-        this.dOperation = dOperation;
+        this.designation = designation;
         this.refEquipement = refEquipement;
         this.dureeOperation = dureeOperation;
     }
-    
-    //Getters
 
+    // Getters
     public String getRefOperation() {
         return refOperation;
     }
 
-    public String getdOperation() {
-        return dOperation;
+    public String getDesignation() {
+        return designation;
     }
 
     public String getRefEquipement() {
@@ -40,16 +29,14 @@ public class Operation {
     public float getDureeOperation() {
         return dureeOperation;
     }
-    
-    
-    //Setters
 
+    // Setters
     public void setRefOperation(String refOperation) {
         this.refOperation = refOperation;
     }
 
-    public void setdOperation(String dOperation) {
-        this.dOperation = dOperation;
+    public void setDesignation(String designation) {
+        this.designation = designation;
     }
 
     public void setRefEquipement(String refEquipement) {
@@ -60,4 +47,3 @@ public class Operation {
         this.dureeOperation = dureeOperation;
     }
 }
-
