@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author llahorgue01 (eh ouais B-) )
  */
-// [v4] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document uniquement pour le moment.
+// [v6] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document et le calcul de la fiabilité de chaque machine ainsi que leur classement.
 public class Fiabilite {
    private static BufferedReader reader = null;
    private static String cheminacces;
@@ -138,7 +138,8 @@ public class Fiabilite {
          
          //Les "indices" se réfèrent à des évennements, i.e. des lignes du fciher. l'indice 0, par exemple, est la première ligne du fichier texte et se refère à cet évenement.
          for (i=0;i<machcount;i++) {
-             int[] indiceliste = new int[4]; //Limite technique choisie pour optimiser le programme. Aucune machine n'a plus de 4 événements liés à elle dans le programme.
+             int[] indiceliste = new int[4]; 
+             // 4 est une limite technique choisie pour optimiser le programme. Aucune machine n'a plus de 4 événements liés à elle dans le fichier texte.
              k=0;
              for (j=0;j<tbmachine.size();j++) {
                if (tbmachine.get(j).equals(machexist.get(i))) {
@@ -164,7 +165,7 @@ public class Fiabilite {
          //pour simplifier, j'ai choisi de ne pas prendre en compte les dates. On étudiera la fiabilité d'une machine sur 1 jour. Si la machine a un problèmes pendant 2 jours différents, la fiabilite totale sera la moyenne de ces deux jours.
          ArrayList<int[]> indicesheure = new ArrayList<int[]>();
          ArrayList<String[]> indicesevent = new ArrayList<String[]>();
-         //Les heures et cause des ArrayList seront rangés aux exactes mêmes positions que les indices des machines.
+         //Les heures et event des ArrayList seront rangés aux exactes mêmes positions que les indices des machines.
          for (i=0;i<machcount;i++) {
              int[] tempheure = new int[4];
              String[] tempevent = new String[4];
@@ -172,11 +173,11 @@ public class Fiabilite {
              for (j=0;j<4;j++) {
                  if (indiceliste[j] != -1) {
                      tempevent[j] = tbevent.get(indiceliste[j]); 
-                     //le -1 est nécessaire à cause d'un décalage entre la numérotation des indices et des positions
                      tempheure[j] = Conversionheures(tbheure.get(indiceliste[j]));
                  } else {
                     tempevent[j] = "E";
                     tempheure[j] = -1;
+                    //les valeurs de "E" pour l'event et "-1" pour l'heure sont choisies pour ne pas être lues par des boucles if au sein du programme.
                   }
              }
              indicesevent.add(tempevent);
@@ -184,14 +185,17 @@ public class Fiabilite {
          }
          
          //3. Déterminer les durées de non-fonctionnement des machines.
-                 ArrayList<Integer> dureearrets = new ArrayList<Integer>(); //on met integer au lieu de int, il est en effet impossible de créer des ArrayList de int.
-         for (i=0;i<machcount;i++) {
+                 ArrayList<Integer> dureearrets = new ArrayList<Integer>(); 
+                 //on met integer au lieu de int, il est en effet impossible de créer des ArrayList de int.
+        for (i=0;i<machcount;i++) {
             int[] tempheure = indicesheure.get(i); 
             String[] tempevent = indicesevent.get(i); 
             int nbheureD = 0;
             int nbheureA = 0;
+            //ces deux variables serviront à distinguer les différentes situations selon le nombre de pannes et de réparations rescencées.
             int dureearret = 0;
             for (j=0;j<4;j++) {
+                //on va ici partir du principe que la durée d'inactivité se calcule par "heure de remise en marche - heure d'arrêt". Les heures sont ici comptées en minutes.
                 if ("A".equals(tempevent[j])) {
                     dureearret = dureearret - tempheure[j];
                     nbheureA ++;
@@ -203,23 +207,59 @@ public class Fiabilite {
             }
             if (nbheureA == 2) {
                 if (nbheureD == 2) {
-                    dureearret = dureearret/2; //C'est le cas où la machine a eu 2 pannes. On fait la moyenne de ces deux pannes (en supposant qu'elles n'arrivent jamais dans la même journée !!)
+                    dureearret = dureearret/2; 
+                    //C'est le cas où la machine a eu 2 pannes. On fait la moyenne de ces deux pannes (en supposant qu'elles n'arrivent jamais dans la même journée !!)
                 }
                 if (nbheureD == 1) {
-                    dureearret = (dureearret + 20*60)/2 ; //c'est le cas où il y a eu 1 panne réparée + une panne non réparée. On considère que la deuxième panne se finit à 20h puis on fait la moyenne.
+                    dureearret = (dureearret + 20*60)/2 ; 
+                    //c'est le cas où il y a eu 1 panne réparée + une panne non réparée. On considère que la deuxième panne se finit à 20h puis on fait la moyenne.
                 }
             }
             if (nbheureA == 1) {
                 //le cas nbheureA = 1 et nbheureD = 1 n'a pas besoin d'être spécifié, il n'y a pas de changement à faire sur la durée d'arrêt déjà calculée.
                 if (nbheureD == 0) {
-                    dureearret = dureearret + 20*60; //1 panne non résolue, l'observation s'arrête à 20h.
+                    dureearret = dureearret + 20*60; 
+                    //1 seule panne non résolue, l'observation s'arrête à 20h.
                 }
             }
-            dureearrets.add(dureearret);
-            System.out.println(dureearrets.get(i));
-            
+            dureearrets.add(dureearret); 
          }
+         //4. Calculs de fiabilite.
+         int dureetotale = (20*60)-(6*60);
+         ArrayList<Double> pourcentagefiabilite = new ArrayList <Double>(); //ici aussi, Double au lieu de double
+         for (i=0;i<dureearrets.size();i++) {
+             double currentdureearret = (double) dureearrets.get(i);
+             pourcentagefiabilite.add((double) ((dureetotale - currentdureearret)*100/dureetotale)); //Ici la formule est durée active / duree totale, où durée active = duree totale - durée d'arrêt. On multiplie par 100 pour avoir un pourcentage.
+         }
+         // FIN DE LA PARTIE 2
          
+         //PARTIE 3 : CLASSEMENT DES MACHINES
+         ArrayList<Double> copiefiabilite = new ArrayList(pourcentagefiabilite);
+         //cette copie est nécessaire car la première boucle for doit toujours être basée sur la taille initiale de pourcentagefiabilite, or le programme nécessite que certains de ces éléments soit retirés !
+         ArrayList<Integer> ordreindex = new ArrayList<Integer>();
+         int indexation = 0;
+         Double currentmax;
+         int nbfiabilite = pourcentagefiabilite.size();
+         for (i=0;i<nbfiabilite;i++) {
+             currentmax=0.0;
+             for (j=0;j<copiefiabilite.size();j++) {
+                if (copiefiabilite.get(j) >= currentmax) {
+                    currentmax = copiefiabilite.get(j); 
+                    indexation = j;
+                    //programme de tri simple : il compare chaque valeur de fiabilite au maximum courant, et prend sa place si il lui est supérieur.
+                 }
+             }
+             ordreindex.add(indexation);
+             //ordreindex correspond aux numéros de placement des machines, rangés dans l'ordre de la meilleure à la moins bonne fiabilité. Il sert à venir chercher les bonnes informations dans les différentes Arraylists ordonées par id.
+             copiefiabilite.set(indexation,0.0);
+             //Cela évite à la même valeur d'être désignée plusieurs fois comme maxmimum.
+         }
+         //FIN PARTIE 3
+         //ANNONCE DES RESULTATS (à adapter sur l'interface graphique !)
+        for (i=0;i<nbfiabilite;i++) {
+            System.out.println("la machine en position "+(i+1)+" est la machine "+machexist.get(ordreindex.get(i))+" avec une fiabilite de "+pourcentagefiabilite.get(ordreindex.get(i)));        
+            //le choix de machexist vient du fait qu'il contient les id des machines de manière ordonée.
+        }
     }
 }
     
