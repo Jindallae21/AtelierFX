@@ -12,6 +12,7 @@ import java.util.ArrayList;
  *
  * @author llahorgue01 (eh ouais B-) )
  */
+//Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document uniquement.
 public class Fiabilite {
    private static BufferedReader reader = null;
    private static String cheminacces;
