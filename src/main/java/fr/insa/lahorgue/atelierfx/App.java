@@ -17,10 +17,14 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Atelier de Fabrication");
-        // === MenuBar ===
+       
         MenuBar menuBar = new MenuBar();
         
-         Label labelItem4 = new Label();
+        Label labelItem4 = new Label();
+        
+        TextField champTexteMachine = new TextField();
+        
+        String texte = champTexteMachine.getText();
         
         Menu menu1 = new Menu("Machine");
         Menu menu2 = new Menu("Poste");
@@ -47,7 +51,7 @@ public class App extends Application {
         menu1.getItems().add(menuItem2);
         menu1.getItems().add(menuItem3);
         menu1.getItems().add(menuItem4);
-        menuItem1.setOnAction(e -> System.out.println("Ajouter une Machine"));
+        menuItem1.setOnAction(e -> System.out.println("Tu as écrit : " + texte));
         menuItem2.setOnAction(e -> System.out.println("Modifier une Machine"));
         menuItem3.setOnAction(e -> System.out.println("Supprimer une Machine"));
         
@@ -62,10 +66,16 @@ public class App extends Application {
         menuItem5.setOnAction(e -> System.out.println("Ajouter une Gamme"));
         menuItem6.setOnAction(e -> System.out.println("Modifier une Gamme"));
 
+        
+        
+ 
         //Vbox de menuItem4
          VBox afficher = new VBox(10, labelItem4);
         afficher.setAlignment(Pos.CENTER);
 
+        //Vbox de MenuItem1
+        VBox Supprimer = new VBox(10, champTexteMachine, menuItem1);
+        
         
          // === Bouton de fermeture ===
         Button closeButton = new Button("X");
