@@ -8,19 +8,31 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 public class App extends Application {
 
+    private final String cheminFichier = Paths.get("data", "machine.txt").toString();
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Atelier de Fabrication");
 
-        // Styles
+        // S'assurer que le dossier "data" existe
+        try {
+            Path dossierData = Paths.get("data");
+            if (!Files.exists(dossierData)) {
+                Files.createDirectories(dossierData);
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur création dossier data : " + e.getMessage());
+        }
+
         String textFieldStyle = "-fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 5 10 5 10; -fx-background-color: #f0f0f0; -fx-border-color: #ccc;";
 
-        // Champs pour ajout machine
         TextField tfRefMachine = new TextField();
         tfRefMachine.setPromptText("Référence de la machine");
         tfRefMachine.setStyle(textFieldStyle);
@@ -45,6 +57,9 @@ public class App extends Application {
         tfCout.setPromptText("Coût horaire de la machine");
         tfCout.setStyle(textFieldStyle);
 
+        Label labelMessage = new Label();
+        labelMessage.setStyle("-fx-text-fill: red;");
+
         Button valider = new Button("Valider");
         valider.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
         Button annuler = new Button("Annuler");
@@ -53,19 +68,17 @@ public class App extends Application {
         HBox buttonBox = new HBox(10, valider, annuler);
         buttonBox.setAlignment(Pos.CENTER);
 
-        VBox formBox = new VBox(12, tfRefMachine, tfDesiMachine, tfTypeMachine, tfXMachine, tfYMachine, tfCout, buttonBox);
+        VBox formBox = new VBox(12, tfRefMachine, tfDesiMachine, tfTypeMachine, tfXMachine, tfYMachine, tfCout, buttonBox, labelMessage);
         formBox.setAlignment(Pos.CENTER);
         formBox.setStyle("-fx-padding: 20;");
         formBox.setVisible(false);
 
-        // Zone d'affichage en colonnes scrollables
         VBox ligneContainer = new VBox(5);
         ScrollPane scrollPane = new ScrollPane(ligneContainer);
         scrollPane.setFitToWidth(true);
         scrollPane.setPrefHeight(300);
         scrollPane.setVisible(false);
 
-        // Champ + bouton suppression
         TextField tfMotCleSuppression = new TextField();
         tfMotCleSuppression.setPromptText("Référence de la machine");
         tfMotCleSuppression.setStyle(textFieldStyle);
@@ -79,7 +92,6 @@ public class App extends Application {
         affichageBox.setAlignment(Pos.CENTER);
         affichageBox.setStyle("-fx-padding: 20;");
 
-        // Barre de menu
         MenuBar menuBar = new MenuBar();
         Menu menu1 = new Menu("Machine");
         MenuItem menuItem1 = new MenuItem("Ajouter");
@@ -87,7 +99,6 @@ public class App extends Application {
         menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimer);
         menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"), new Menu("Rapport de Fiabilité"));
 
-        // Top bar avec bouton fermer
         Button closeButton = new Button("X");
         closeButton.setStyle("-fx-font-size: 16px; -fx-background-color: red; -fx-text-fill: white;");
         closeButton.setOnAction(e -> primaryStage.close());
@@ -97,13 +108,12 @@ public class App extends Application {
         topBar.setAlignment(Pos.CENTER_LEFT);
         topBar.setStyle("-fx-padding: 5px;");
 
-        // Afficher formulaire
         menuItem1.setOnAction(e -> {
             formBox.setVisible(true);
             affichageBox.setVisible(false);
+            labelMessage.setText("");
         });
 
-        // Afficher/Supprimer
         menuItemAfficherSupprimer.setOnAction(e -> {
             formBox.setVisible(false);
             affichageBox.setVisible(true);
@@ -121,17 +131,16 @@ public class App extends Application {
                     }
                     ligneContainer.getChildren().add(ligneHBox);
                 }
+                suppressionBox.setVisible(true);
             } catch (IOException ex) {
                 ligneContainer.getChildren().add(new Label("Erreur lors de la lecture du fichier."));
             }
         });
 
-        // Suppression
         btnSupprimer.setOnAction(e -> {
             String motCle = tfMotCleSuppression.getText().trim();
             if (!motCle.isEmpty()) {
                 try {
-                    String cheminFichier = Paths.get("src/main/resources/fr/insa/lahorgue/atelierfx/machine.txt").toString();
                     Utile.supprimerLigne(cheminFichier, motCle);
                     menuItemAfficherSupprimer.fire();
                 } catch (IOException ex) {
@@ -141,36 +150,54 @@ public class App extends Application {
             }
         });
 
-        // Actions valider / annuler
         valider.setOnAction(e -> {
             try {
-                String refEquipement = tfRefMachine.getText();
-                String dEquipement = tfDesiMachine.getText();
-                String type = tfTypeMachine.getText();
-                float x = Float.parseFloat(tfXMachine.getText());
-                float y = Float.parseFloat(tfYMachine.getText());
-                float cout = Float.parseFloat(tfCout.getText());
+                String refEquipement = tfRefMachine.getText().trim();
+                String dEquipement = tfDesiMachine.getText().trim();
+                String type = tfTypeMachine.getText().trim();
+                float x = Float.parseFloat(tfXMachine.getText().trim());
+                float y = Float.parseFloat(tfYMachine.getText().trim());
+                float cout = Float.parseFloat(tfCout.getText().trim());
 
                 Machine machine = new Machine(refEquipement, dEquipement, type, x, y);
                 machine.setCout(cout);
-                System.out.println("Machine créée : " + machine.getRefEquipement() + ", Cout : " + machine.getCout());
 
-                tfRefMachine.clear(); tfDesiMachine.clear(); tfTypeMachine.clear();
-                tfXMachine.clear(); tfYMachine.clear(); tfCout.clear();
+                // Ajout dans le fichier via la méthode générique Utile
+                Utile.ajouterLigne(cheminFichier, machine.toList());
+
+                labelMessage.setStyle("-fx-text-fill: green;");
+                labelMessage.setText("Machine ajoutée avec succès.");
+
+                // Reset formulaire
+                tfRefMachine.clear();
+                tfDesiMachine.clear();
+                tfTypeMachine.clear();
+                tfXMachine.clear();
+                tfYMachine.clear();
+                tfCout.clear();
+
                 formBox.setVisible(false);
 
             } catch (NumberFormatException ex) {
-                System.out.println("Erreur : vérifiez les valeurs numériques.");
+                labelMessage.setStyle("-fx-text-fill: red;");
+                labelMessage.setText("Erreur : Vérifiez les valeurs numériques.");
+            } catch (IOException ex) {
+                labelMessage.setStyle("-fx-text-fill: red;");
+                labelMessage.setText("Erreur lors de l'écriture dans le fichier : " + ex.getMessage());
             }
         });
 
         annuler.setOnAction(e -> {
-            tfRefMachine.clear(); tfDesiMachine.clear(); tfTypeMachine.clear();
-            tfXMachine.clear(); tfYMachine.clear(); tfCout.clear();
+            tfRefMachine.clear();
+            tfDesiMachine.clear();
+            tfTypeMachine.clear();
+            tfXMachine.clear();
+            tfYMachine.clear();
+            tfCout.clear();
+            labelMessage.setText("");
             formBox.setVisible(false);
         });
 
-        // Layout principal
         VBox mainContent = new VBox(20, formBox, affichageBox);
         mainContent.setAlignment(Pos.CENTER);
 
