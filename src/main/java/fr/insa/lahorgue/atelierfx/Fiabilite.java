@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author llahorgue01 (eh ouais B-) )
  */
-// [v3] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document uniquement pour le moment.
+// [v4] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document uniquement pour le moment.
 public class Fiabilite {
    private static BufferedReader reader = null;
    private static String cheminacces;
@@ -48,7 +48,6 @@ public class Fiabilite {
                     //Le reader lit tous les caractères jusqu'à un caractère donné (représenté par son unicode)
                 }
         Chainelue = contenu.toString();
-        System.out.println("Lu : "+Chainelue);
         //Le StringBuilder convertit les caractères lus en une chaîne. 
         return Chainelue;
     }
@@ -115,7 +114,6 @@ public class Fiabilite {
                     tbmachine.add("erreur");      
                     //il renvoie erreur si la machine n'existe pas. Le mot "erreur" prend la place de l'identifiant de la machine dans la liste, si elle existait
                     }                                      
-                    System.out.println(tbmachine.get(i));
                 }
                 if (j==3) {
                     tbevent.add(currentread);  
@@ -184,15 +182,44 @@ public class Fiabilite {
              indicesevent.add(tempevent);
              indicesheure.add(tempheure);
          }
+         
+         //3. Déterminer les durées de non-fonctionnement des machines.
+                 ArrayList<Integer> dureearrets = new ArrayList<Integer>(); //on met integer au lieu de int, il est en effet impossible de créer des ArrayList de int.
          for (i=0;i<machcount;i++) {
-             int[] tempheure = indicesheure.get(i);
-             String[] tempcause = indicesevent.get(i);
-             for (j=0;j<4;j++) {
-                System.out.print(tempheure[j]+" ");
-                System.out.print(tempcause[j]+" ");
-             }
-             System.out.println(" ");
+            int[] tempheure = indicesheure.get(i); 
+            String[] tempevent = indicesevent.get(i); 
+            int nbheureD = 0;
+            int nbheureA = 0;
+            int dureearret = 0;
+            for (j=0;j<4;j++) {
+                if ("A".equals(tempevent[j])) {
+                    dureearret = dureearret - tempheure[j];
+                    nbheureA ++;
+                }
+                if ("D".equals(tempevent[j])) {
+                    dureearret = dureearret + tempheure[j];
+                    nbheureD ++;
+                }
+            }
+            if (nbheureA == 2) {
+                if (nbheureD == 2) {
+                    dureearret = dureearret/2; //C'est le cas où la machine a eu 2 pannes. On fait la moyenne de ces deux pannes (en supposant qu'elles n'arrivent jamais dans la même journée !!)
+                }
+                if (nbheureD == 1) {
+                    dureearret = (dureearret + 20*60)/2 ; //c'est le cas où il y a eu 1 panne réparée + une panne non réparée. On considère que la deuxième panne se finit à 20h puis on fait la moyenne.
+                }
+            }
+            if (nbheureA == 1) {
+                //le cas nbheureA = 1 et nbheureD = 1 n'a pas besoin d'être spécifié, il n'y a pas de changement à faire sur la durée d'arrêt déjà calculée.
+                if (nbheureD == 0) {
+                    dureearret = dureearret + 20*60; //1 panne non résolue, l'observation s'arrête à 20h.
+                }
+            }
+            dureearrets.add(dureearret);
+            System.out.println(dureearrets.get(i));
+            
          }
+         
     }
 }
     
