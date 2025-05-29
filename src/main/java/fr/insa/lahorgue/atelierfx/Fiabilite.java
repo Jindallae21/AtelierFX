@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author llahorgue01 (eh ouais B-) )
  */
-// [v2] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document uniquement pour le moment.
+// [v3] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document uniquement pour le moment.
 public class Fiabilite {
    private static BufferedReader reader = null;
    private static String cheminacces;
@@ -52,8 +52,15 @@ public class Fiabilite {
         //Le StringBuilder convertit les caractères lus en une chaîne. 
         return Chainelue;
     }
+    public int Conversionheures(String heure){
+        String[] heuresplit = heure.split(":");
+            int minutecount = Integer.parseInt(heuresplit[1])+60*Integer.parseInt(heuresplit[0]);
+            return minutecount;
+        }
+        
+    
     public void RapportFiabilite(Fiabilite fiabilite) throws IOException {
-        //PREMIERE MOITIEE : Lectur du fichier suivi maintenance
+        //PREMIERE PARTIE : Lecture du fichier de suivi
         try {
             cheminacces = "SuiviMaintenance.txt";
             reader = new BufferedReader(new FileReader(cheminacces));
@@ -66,7 +73,6 @@ public class Fiabilite {
         int i;
         int j;
         int k;
-        int l;
         //ce sont des itérateurs ici.
         String currentread;
         ArrayList<String> tbdate = new ArrayList<String>();
@@ -77,7 +83,7 @@ public class Fiabilite {
         ArrayList<String> tbevent = new ArrayList<String>();
         //Ces tableaux seront remplis par la méthode progressivement, et seront ensuite utilisés par le programme pour calculer la fiabilité
         ArrayList<String> machexist = new ArrayList<String>();
-        //machexiste servira de référence à l'existence ou non d'un id de machine lu par le programme
+        //machexiste servira de référence à l'existence ou non d'un id de machine lu dans le fichier
         machexist.add("Mach_1");
         machexist.add("Mach_2");
         machexist.add("Mach_3");
@@ -86,7 +92,7 @@ public class Fiabilite {
         for (i=0;i<11;i++){
             //une répétition pour chaque ligne du programme.  
             for (j=0;j<5;j++) {
-                //une répétition pour chaque élément de la ligne (la cause étant en fin de ligne, elle est traitée à part
+                //une répétition pour chaque élément de la ligne (la cause étant en fin de ligne, elle est traitée à part)
                 currentread = LectureRapport(59,reader);
                 //selon la valeur de j, i.e la position de la chaîne lue dans la ligne, la chaîne est attribué à la liste correspondante.
                 if (j==0) { 
@@ -126,20 +132,12 @@ public class Fiabilite {
             }
             tbcause.add(currentread);                       
         }
-         for (i=0;i<11;i++){
-
-            System.out.print(tbdate.get(i));
-            System.out.print(tbheure.get(i));
-            System.out.print(tbmachine.get(i));
-            System.out.print(tboperateur.get(i));
-            System.out.print(tbevent.get(i));            
-            System.out.println(tbcause.get(i));
-            
-        }
-         //Deuxième moititée : calcul de la fiabilité de chaque machine
+         //FIN DE LA PREMIERE PARTIE 
+         //Deuxième partie : calcul de la fiabilité de chaque machine
          //1 : identification des "indices" des machines
          int machcount = machexist.size();
          ArrayList<int[]> indicesmachine = new ArrayList<int[]>();
+         
          //Les "indices" se réfèrent à des évennements, i.e. des lignes du fciher. l'indice 0, par exemple, est la première ligne du fichier texte et se refère à cet évenement.
          for (i=0;i<machcount;i++) {
              int[] indiceliste = new int[4]; //Limite technique choisie pour optimiser le programme. Aucune machine n'a plus de 4 événements liés à elle dans le programme.
@@ -150,18 +148,51 @@ public class Fiabilite {
                  k++;
                  //on profite du fait que tbmachine a été crée dans l'ordre des indices. Ainsi, la machine en position 4 de l'Arraylist est celle impliquée dans le 4ème évenement. ça sauve du temps de recherche.
                }
+                  
+               }
+             
+         for (j=1;j<4;j++) {
+             if (indiceliste[j] == 0) {
+                 indiceliste[j] = -1;
+                 //Cela évitera des confusions dans la suite du programme : tous les espaces vides ont la valeur -1 pour éviter une confusion avec l'indice 0
              }
+         }
              indicesmachine.add(indiceliste);
              
          }
          //désormais on a une arraylist dont l'élément i est une liste qui recenscie les positions des évennements impliquant la machine i}
          
-//2 : extraction des données utiles : les heures et les types de problème
+//2 : extraction des données utiles : les heures et les "event" (marche ou arrêt)
          //pour simplifier, j'ai choisi de ne pas prendre en compte les dates. On étudiera la fiabilité d'une machine sur 1 jour. Si la machine a un problèmes pendant 2 jours différents, la fiabilite totale sera la moyenne de ces deux jours.
-         ArrayList<int[]> heuresuivi = new ArrayList<int[]>();
-         ArrayList<String[]> causesuivi = new ArrayList<String[]>();
+         ArrayList<int[]> indicesheure = new ArrayList<int[]>();
+         ArrayList<String[]> indicesevent = new ArrayList<String[]>();
          //Les heures et cause des ArrayList seront rangés aux exactes mêmes positions que les indices des machines.
-         
+         for (i=0;i<machcount;i++) {
+             int[] tempheure = new int[4];
+             String[] tempevent = new String[4];
+             int [] indiceliste = indicesmachine.get(i);
+             for (j=0;j<4;j++) {
+                 if (indiceliste[j] != -1) {
+                     tempevent[j] = tbevent.get(indiceliste[j]); 
+                     //le -1 est nécessaire à cause d'un décalage entre la numérotation des indices et des positions
+                     tempheure[j] = Conversionheures(tbheure.get(indiceliste[j]));
+                 } else {
+                    tempevent[j] = "E";
+                    tempheure[j] = -1;
+                  }
+             }
+             indicesevent.add(tempevent);
+             indicesheure.add(tempheure);
+         }
+         for (i=0;i<machcount;i++) {
+             int[] tempheure = indicesheure.get(i);
+             String[] tempcause = indicesevent.get(i);
+             for (j=0;j<4;j++) {
+                System.out.print(tempheure[j]+" ");
+                System.out.print(tempcause[j]+" ");
+             }
+             System.out.println(" ");
+         }
     }
 }
     
