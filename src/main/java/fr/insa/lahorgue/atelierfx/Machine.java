@@ -1,7 +1,9 @@
 package fr.insa.lahorgue.atelierfx;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,4 +83,43 @@ public class Machine extends Equipement {
         return String.format("Machine[ref=%s, desi=%s, type=%s, x=%.2f, y=%.2f, cout=%.2f]",
                 getRefEquipement(), getDesignation(), getType(), getX(), getY(), getCout());
     }
+    public static void sauvegarderMachinesDansFichier(List<Machine> machines, String cheminFichier) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(Path.of(cheminFichier))) {
+            for (Machine m : machines) {
+                // on écrit la machine au format CSV (séparateur ;)
+                writer.write(String.join(";", m.toList()));
+                writer.newLine();
+            }
+        }
+    }
+    
+    
+        /**
+     * Modifie une colonne spécifique dans une ligne ciblée par un texte dans le fichier.
+     *
+     * @param cheminFichier chemin du fichier
+     * @param texteCible texte pour identifier la ligne à modifier (ex: référence machine)
+     * @param indexColonne index de la colonne à modifier (0-based)
+     * @param nouveau nouvelle valeur à mettre dans la colonne
+     * @throws IOException en cas d'erreur IO
+     */
+    public static void modifierElement(String cheminFichier, String texteCible, int indexColonne, String nouveau) throws IOException {
+        Path path = Paths.get(cheminFichier);
+        List<String> lignes = Files.readAllLines(path);
+
+        List<String> lignesModifiees = new ArrayList<>();
+
+        for (String ligne : lignes) {
+            if (ligne.contains(texteCible)) {
+                String[] colonnes = ligne.split(";");
+                if (indexColonne >= 0 && indexColonne < colonnes.length) {
+                    colonnes[indexColonne] = nouveau.trim();
+                    ligne = String.join(";", colonnes);
+                }
+            }
+            lignesModifiees.add(ligne);
+        }
+        Files.write(path, lignesModifiees);
+    }
+
 }
