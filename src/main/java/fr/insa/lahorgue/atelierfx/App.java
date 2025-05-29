@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class App extends Application {
@@ -18,7 +19,7 @@ public class App extends Application {
     private final String cheminFichier = Paths.get("data", "machine.txt").toString();
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         primaryStage.setTitle("Atelier de Fabrication");
 
         // S'assurer que le dossier "data" existe
@@ -94,10 +95,11 @@ public class App extends Application {
 
         MenuBar menuBar = new MenuBar();
         Menu menu1 = new Menu("Machine");
+        Menu menufiable = new Menu ("Rapport de fiabilité");
         MenuItem menuItem1 = new MenuItem("Ajouter");
         MenuItem menuItemAfficherSupprimer = new MenuItem("Afficher/Supprimer");
         menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimer);
-        menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"), new Menu("Rapport de Fiabilité"));
+        menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"),menufiable);
 
         Button closeButton = new Button("X");
         closeButton.setStyle("-fx-font-size: 16px; -fx-background-color: red; -fx-text-fill: white;");
@@ -112,6 +114,25 @@ public class App extends Application {
             formBox.setVisible(true);
             affichageBox.setVisible(false);
             labelMessage.setText("");
+        });
+        
+        //action du bouton rapport de fiabilite
+        Fiabilite instancefiable = new Fiabilite();
+
+               ArrayList<String> newhome = new ArrayList<String>(instancefiable.RapportFiabilite(instancefiable));
+            String rapportfinal = "";
+            int i;
+            for (i=0;i<newhome.size();i++){
+                rapportfinal = rapportfinal+newhome.get(i)+"\n"; 
+            }
+        Label labelfiable1 = new Label("Lecture du fichier SuiviMaintenance.txt\nRécupération des données du fichier\nCalcul des fiabilités de chaque machine\nClasemment des machines...");
+        Label labelfiable2 = new Label(rapportfinal);
+            VBox boitefiable = new VBox(50, scrollPane, suppressionBox);
+            boitefiable.getChildren().addAll(labelfiable1, labelfiable2);
+            boitefiable.setAlignment(Pos.CENTER);
+            StackPane stackfiable = new StackPane(boitefiable); 
+        menufiable.setOnAction(e -> {
+            scrollPane.setVisible(true);
         });
 
         menuItemAfficherSupprimer.setOnAction(e -> {
@@ -198,7 +219,7 @@ public class App extends Application {
             formBox.setVisible(false);
         });
 
-        VBox mainContent = new VBox(20, formBox, affichageBox);
+        VBox mainContent = new VBox(20, formBox, affichageBox, boitefiable);
         mainContent.setAlignment(Pos.CENTER);
 
         BorderPane root = new BorderPane();

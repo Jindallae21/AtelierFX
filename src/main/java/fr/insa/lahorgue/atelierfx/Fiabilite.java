@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 /**
  *
- * @author llahorgue01 (eh ouais B-) )
+ * @author llahorgue01 (c'est la perle de mes yeux)
  */
 // [v6] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document et le calcul de la fiabilité de chaque machine ainsi que leur classement.
 public class Fiabilite {
@@ -58,7 +58,7 @@ public class Fiabilite {
         }
         
     
-    public void RapportFiabilite(Fiabilite fiabilite) throws IOException {
+    public ArrayList<String> RapportFiabilite(Fiabilite fiabilite) throws IOException {
         //PREMIERE PARTIE : Lecture du fichier de suivi
         try {
             cheminacces = "SuiviMaintenance.txt";
@@ -260,6 +260,12 @@ public class Fiabilite {
             System.out.println("la machine en position "+(i+1)+" est la machine "+machexist.get(ordreindex.get(i))+" avec une fiabilite de "+pourcentagefiabilite.get(ordreindex.get(i)));        
             //le choix de machexist vient du fait qu'il contient les id des machines de manière ordonée.
         }
+       ArrayList<String> finaldestination = new ArrayList<String>();
+       for (i=0;i<nbfiabilite;i++) {
+            finaldestination.add("la machine en position "+(i+1)+" est la machine "+machexist.get(ordreindex.get(i))+" avec une fiabilite de "+pourcentagefiabilite.get(ordreindex.get(i)));
+            
+       }
+       return finaldestination;
     }
 }
     

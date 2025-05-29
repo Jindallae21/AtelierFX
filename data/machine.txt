@@ -1,0 +1,1 @@
+Mach_6,Imprimante_2,Imprimante,20.0,50.0,500.0
