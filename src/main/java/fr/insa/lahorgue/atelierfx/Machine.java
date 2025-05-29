@@ -1,40 +1,32 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package fr.insa.lahorgue.atelierfx;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 /**
- *
- * @author phupka01
+ * Classe Machine qui hérite d'Equipement.
+ * Représente une machine positionnée dans l'atelier.
  */
-public class Machine extends Equipement {   
+public class Machine extends Equipement {
+
     private String type;
     private float x;
     private float y;
 
-
-    
-    //Getters et Setter
-    public String getRefMachine() {
-        return refMachine;
+    /**
+     * Constructeur Machine
+     * 
+     * @param refMachine Référence de la machine
+     * @param dMachine Désignation de la machine
+     * @param type Type de machine
+     * @param x Coordonnée X
+     * @param y Coordonnée Y
+     */
+    public Machine(String refMachine, String dMachine, String type, float x, float y) {
+        super(refMachine, dMachine); // Initialise les champs de la superclasse Equipement
+        this.type = type;
+        this.x = x;
+        this.y = y;
     }
 
-    public void setRefMachine(String refMachine) {
-        this.refMachine = refMachine;
-    }
-
-    public String getdMachine() {
-        return dMachine;
-    }
-
-    public void setdMachine(String dMachine) {
-        this.dMachine = dMachine;
-    }
+    // Getters et Setters pour les champs propres à Machine
 
     public String getType() {
         return type;
@@ -43,7 +35,7 @@ public class Machine extends Equipement {
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public float getX() {
         return x;
     }
@@ -60,41 +52,22 @@ public class Machine extends Equipement {
         this.y = y;
     }
 
-    /**
-     *
-     * @return
-     */
-    @Override
-    public float getCout() {
-        return cout;
+    // Accès raccourci à la référence et à la désignation
+    public String getRefMachine() {
+        return this.refEquipement;
+    }
+
+    public String getDMachine() {
+        return this.dEquipement;
     }
 
     /**
-     *
-     * @param cout
+     * Méthode de calcul du coût (peut être redéfinie dans d'autres types d'équipement)
+     * @param machine l'objet machine
+     * @return le coût associé
      */
-    @Override
-    public void setCout(float cout) {
-        this.cout = cout;
+    public static float CalculCout(Machine machine) {
+        // Placeholder : tu peux remplacer cette logique par une vraie formule métier
+        return machine.getCout();
     }
-    
-    //Constructeur
-
-    public Machine(String refMachine, String dMachine, String type, float x, float y) {
-        super(refEquipement, dEquipement);
-        this.refMachine = refMachine;
-        this.dMachine = dMachine;
-        this.type = type;
-        this.x = x;
-        this.y = y;
-    }
-//Méthodes
-    public static float Calculcout(Machine Machine){
-        return Machine.getCout();
-        //écrire ici la méthode de calcul du cout d'une machine
-    }
-    
 }
-    
-    
-
