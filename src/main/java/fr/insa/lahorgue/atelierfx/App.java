@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class App extends Application {
 
@@ -116,6 +118,26 @@ public class App extends Application {
 
         menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimer, menuItemModifier);
         menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"), menufiable);
+        
+        //BOuton rapport de fiabilité
+        MenuItem affichagefiable = new MenuItem("Afficher le rapport");
+        menufiable.getItems().add(affichagefiable);
+        Fiabilite instancefiable = new Fiabilite();
+        ArrayList<String> newhome = new ArrayList<>(instancefiable.RapportFiabilite(instancefiable));
+        StringBuilder rapportfinal = new StringBuilder();
+        for (String ligne : newhome) {
+            rapportfinal.append(ligne).append("\n");
+        }
+        Text labelfiable1 = new Text("Lecture du fichier SuiviMaintenance.txt\nRécupération des données du fichier\nCalcul des fiabilités de chaque machine\nClassement des machines...");
+        Text labelfiable2 = new Text(rapportfinal.toString());
+        labelfiable1.setWrappingWidth(600);
+        labelfiable2.setWrappingWidth(600);
+        labelfiable1.setVisible(true);
+        labelfiable2.setVisible(true);
+        VBox boitefiable = new VBox(10, labelfiable1, labelfiable2);     
+        boitefiable.setStyle("-fx-padding: 20;");
+        boitefiable.setAlignment(Pos.CENTER);
+        boitefiable.setVisible(false);
 
         // Suppression du bouton X et spacer
         HBox topBar = new HBox(menuBar);
@@ -126,31 +148,22 @@ public class App extends Application {
             formBox.setVisible(true);
             formModifBox.setVisible(false);
             affichageBox.setVisible(false);
+            boitefiable.setVisible(false);
             labelMessage.setText("");
         });
 
         // Action du bouton rapport de fiabilité
-        Fiabilite instancefiable = new Fiabilite();
-
-        ArrayList<String> newhome = new ArrayList<>(instancefiable.RapportFiabilite(instancefiable));
-        StringBuilder rapportfinal = new StringBuilder();
-        for (String ligne : newhome) {
-            rapportfinal.append(ligne).append("\n");
-        }
-        Label labelfiable1 = new Label("Lecture du fichier SuiviMaintenance.txt\nRécupération des données du fichier\nCalcul des fiabilités de chaque machine\nClassement des machines...");
-        Label labelfiable2 = new Label(rapportfinal.toString());
-        VBox boitefiable = new VBox(50, labelfiable1, labelfiable2);
-        boitefiable.setAlignment(Pos.CENTER);
-        StackPane stackfiable = new StackPane(boitefiable);
-
-        menufiable.setOnAction(e -> {
-            BorderPane root = (BorderPane) primaryStage.getScene().getRoot();
-            root.setCenter(stackfiable);
+        affichagefiable.setOnAction(e -> {
+            boitefiable.setVisible(true);
+            formBox.setVisible(false);
+            formModifBox.setVisible(false);
+            affichageBox.setVisible(false);
         });
 
         menuItemAfficherSupprimer.setOnAction(e -> {
             formBox.setVisible(false);
             formModifBox.setVisible(false);
+            boitefiable.setVisible(false);
             affichageBox.setVisible(true);
             scrollPane.setVisible(true);
             ligneContainer.getChildren().clear();
@@ -201,6 +214,7 @@ public class App extends Application {
             affichageBox.setVisible(false);
             formBox.setVisible(false);
             formModifBox.setVisible(true);
+            boitefiable.setVisible(false);
             labelMessage.setText("");
         });
 
@@ -316,15 +330,16 @@ public class App extends Application {
             labelMessage.setText("");
             formBox.setVisible(false);
             formModifBox.setVisible(false);
+            boitefiable.setVisible(false);
         });
 
-        VBox mainContent = new VBox(20, formModifBox, affichageBox);
+        VBox mainContent = new VBox(20, boitefiable, formModifBox, affichageBox);
         mainContent.setAlignment(Pos.CENTER);
 
         BorderPane root = new BorderPane();
         root.setTop(topBar);
         root.setCenter(mainContent);
-
+        
         Scene scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);

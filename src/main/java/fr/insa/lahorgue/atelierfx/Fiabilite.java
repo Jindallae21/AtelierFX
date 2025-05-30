@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 /**
  *
- * @author llahorgue01 (c'est la perle de mes yeux)
+ * @author llahorgue01 (le seul et unique !)
  */
 // [v6] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document et le calcul de la fiabilité de chaque machine ainsi que leur classement.
 public class Fiabilite {
