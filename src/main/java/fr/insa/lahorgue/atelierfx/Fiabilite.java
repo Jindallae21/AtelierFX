@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author llahorgue01 (le seul et unique !)
  */
-// [v6] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document et le calcul de la fiabilité de chaque machine ainsi que leur classement.
+// [v7] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document et le calcul de la fiabilité de chaque machine ainsi que leur classement.
 public class Fiabilite {
    private static BufferedReader reader = null;
    private static String cheminacces;
@@ -136,7 +136,7 @@ public class Fiabilite {
          int machcount = machexist.size();
          ArrayList<int[]> indicesmachine = new ArrayList<int[]>();
          
-         //Les "indices" se réfèrent à des évennements, i.e. des lignes du fciher. l'indice 0, par exemple, est la première ligne du fichier texte et se refère à cet évenement.
+         //Les "indices" se réfèrent à des évennements, i.e. des lignes du fichier. l'indice 0, par exemple, est la première ligne du fichier texte et se refère à cet évenement.
          for (i=0;i<machcount;i++) {
              int[] indiceliste = new int[4]; 
              // 4 est une limite technique choisie pour optimiser le programme. Aucune machine n'a plus de 4 événements liés à elle dans le fichier texte.
