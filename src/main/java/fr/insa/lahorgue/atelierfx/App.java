@@ -62,6 +62,14 @@ public class App extends Application {
 
         Label labelMessage = new Label();
         labelMessage.setStyle("-fx-text-fill: red;");
+        
+        TextField tfRefPoste = new TextField();
+        tfRefMachine.setPromptText("Référence du poste");
+        tfRefMachine.setStyle(textFieldStyle);
+
+        TextField tfDesiPote = new TextField();
+        tfDesiMachine.setPromptText("Désignation du poste");
+        tfDesiMachine.setStyle(textFieldStyle);
 
         Button valider = new Button("Valider");
         valider.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
