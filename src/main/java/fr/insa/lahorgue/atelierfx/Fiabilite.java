@@ -10,9 +10,9 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 /**
  *
- * @author llahorgue01 (le seul et unique !)
+ * @author llahorgue01 (c'est moi !!)
  */
-// [v7] Cette classe est la version à jour et fonctionelle de la classe Fiabilite, pour la lecture du document et le calcul de la fiabilité de chaque machine ainsi que leur classement.
+// [vf] Cette classe est la version finale de la classe Fiabilite, pour la lecture du document et le calcul de la fiabilité de chaque machine ainsi que leur classement.
 public class Fiabilite {
    private static BufferedReader reader = null;
    private static String cheminacces;
@@ -87,7 +87,8 @@ public class Fiabilite {
         machexist.add("Mach_2");
         machexist.add("Mach_3");
         machexist.add("Mach_4");
-        machexist.add("Mach_5");      
+        machexist.add("Mach_5");
+        //Début de la première partie
         for (i=0;i<11;i++){
             //une répétition pour chaque ligne du programme.  
             for (j=0;j<5;j++) {
