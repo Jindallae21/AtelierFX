@@ -67,22 +67,39 @@ public class App extends Application {
         tfRefMachine.setPromptText("Référence du poste");
         tfRefMachine.setStyle(textFieldStyle);
 
-        TextField tfDesiPote = new TextField();
+        TextField tfDesiPoste = new TextField();
         tfDesiMachine.setPromptText("Désignation du poste");
         tfDesiMachine.setStyle(textFieldStyle);
+        
+        TextField tfListeMachine = new TextField();
+        tfDesiMachine.setPromptText("Liste de Machines, séparées par ';'");
+        tfDesiMachine.setStyle(textFieldStyle);
 
-        Button valider = new Button("Valider");
-        valider.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
-        Button annuler = new Button("Annuler");
-        annuler.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
+        Button validerMachine = new Button("Valider");
+        validerMachine.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
+        Button annulerMachine = new Button("Annuler");
+        annulerMachine.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
 
-        HBox buttonBox = new HBox(10, valider, annuler);
-        buttonBox.setAlignment(Pos.CENTER);
+        HBox buttonBoxMachine = new HBox(10, validerMachine, annulerMachine);
+        buttonBoxMachine.setAlignment(Pos.CENTER);
+        
+         Button validerPoste = new Button("Valider");
+        validerMachine.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
+        Button annulerPoste = new Button("Annuler");
+        annulerMachine.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 16;");
 
-        VBox formBox = new VBox(12, tfRefMachine, tfDesiMachine, tfTypeMachine, tfXMachine, tfYMachine, tfCout, buttonBox, labelMessage);
-        formBox.setAlignment(Pos.CENTER);
-        formBox.setStyle("-fx-padding: 20;");
-        formBox.setVisible(false);
+        HBox buttonBoxPoste= new HBox(10, validerPoste, annulerPoste);
+        buttonBoxMachine.setAlignment(Pos.CENTER);
+
+        VBox machineBox = new VBox(12, tfRefMachine, tfDesiMachine, tfTypeMachine, tfXMachine, tfYMachine, tfCout, buttonBoxMachine, labelMessage);
+        machineBox.setAlignment(Pos.CENTER);
+        machineBox.setStyle("-fx-padding: 20;");
+        machineBox.setVisible(false);
+        
+        VBox posteBox = new VBox(12, tfRefPoste, tfDesiPoste, tfListeMachine, buttonBoxPoste, labelMessage);
+        posteBox.setAlignment(Pos.CENTER);
+        posteBox.setStyle("-fx-padding: 20;");
+        posteBox.setVisible(false);
 
         VBox ligneContainer = new VBox(5);
         ScrollPane scrollPane = new ScrollPane(ligneContainer);
@@ -107,7 +124,7 @@ public class App extends Application {
         Button btnChargerModif = new Button("Charger");
         btnChargerModif.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;");
 
-        VBox formModifBox = new VBox(10, tfRefModif, btnChargerModif, formBox);
+        VBox formModifBox = new VBox(10, tfRefModif, btnChargerModif, machineBox);
         formModifBox.setAlignment(Pos.CENTER);
         formModifBox.setStyle("-fx-padding: 20;");
         formModifBox.setVisible(false);
@@ -118,14 +135,19 @@ public class App extends Application {
         affichageBox.setVisible(false);
 
         MenuBar menuBar = new MenuBar();
-        Menu menu1 = new Menu("Machine");
         Menu menufiable = new Menu("Rapport de fiabilité");
+        Menu menu1 = new Menu("Machine");
         MenuItem menuItem1 = new MenuItem("Ajouter");
-        MenuItem menuItemAfficherSupprimer = new MenuItem("Afficher/Supprimer");
-        MenuItem menuItemModifier = new MenuItem("Afficher/Modifier");
+        MenuItem menuItemAfficherSupprimerMachine = new MenuItem("Afficher/Supprimer");
+        MenuItem menuItemModifierMachine = new MenuItem("Afficher/Modifier");
+        Menu menu2 = new Menu("Poste");
+        MenuItem menuItem2 = new MenuItem("Ajouter");
+        MenuItem menuItemAfficherSupprimerPoste = new MenuItem("Afficher/Supprimer");
+        MenuItem menuItemModifierPoste = new MenuItem("Afficher/Modifier");
 
-        menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimer, menuItemModifier);
-        menuBar.getMenus().addAll(menu1, new Menu("Poste"), new Menu("Produit"), new Menu("Gamme"), menufiable);
+        menu1.getItems().addAll(menuItem1, menuItemAfficherSupprimerMachine, menuItemModifierMachine);
+        menu2.getItems().addAll(menuItem2, menuItemAfficherSupprimerPoste, menuItemModifierPoste);
+        menuBar.getMenus().addAll(menu1, menu2, new Menu("Produit"), new Menu("Gamme"), menufiable);
         
         //BOuton rapport de fiabilité
         MenuItem affichagefiable = new MenuItem("Afficher le rapport");
@@ -153,7 +175,7 @@ public class App extends Application {
         topBar.setStyle("-fx-padding: 5px;");
 
         menuItem1.setOnAction(e -> {
-            formBox.setVisible(true);
+            machineBox.setVisible(true);
             formModifBox.setVisible(false);
             affichageBox.setVisible(false);
             boitefiable.setVisible(false);
@@ -163,13 +185,13 @@ public class App extends Application {
         // Action du bouton rapport de fiabilité
         affichagefiable.setOnAction(e -> {
             boitefiable.setVisible(true);
-            formBox.setVisible(false);
+            machineBox.setVisible(false);
             formModifBox.setVisible(false);
             affichageBox.setVisible(false);
         });
 
-        menuItemAfficherSupprimer.setOnAction(e -> {
-            formBox.setVisible(false);
+        menuItemAfficherSupprimerMachine.setOnAction(e -> {
+            machineBox.setVisible(false);
             formModifBox.setVisible(false);
             boitefiable.setVisible(false);
             affichageBox.setVisible(true);
@@ -210,7 +232,7 @@ public class App extends Application {
             if (!motCle.isEmpty()) {
                 try {
                     Utile.supprimerLigne(cheminFichier, motCle);
-                    menuItemAfficherSupprimer.fire();
+                    menuItemAfficherSupprimerMachine.fire();
                 } catch (IOException ex) {
                     ligneContainer.getChildren().clear();
                     ligneContainer.getChildren().add(new Label("Erreur lors de la suppression : " + ex.getMessage()));
@@ -218,9 +240,9 @@ public class App extends Application {
             }
         });
 
-        menuItemModifier.setOnAction(e -> {
+        menuItemModifierMachine.setOnAction(e -> {
             affichageBox.setVisible(false);
-            formBox.setVisible(false);
+            machineBox.setVisible(false);
             formModifBox.setVisible(true);
             boitefiable.setVisible(false);
             labelMessage.setText("");
@@ -247,16 +269,16 @@ public class App extends Application {
                         tfYMachine.setText(String.valueOf(machineTrouvee.getY()));
                         tfCout.setText(String.valueOf(machineTrouvee.getCout()));
                         labelMessage.setText("Machine chargée, modifiez les champs et cliquez sur Valider.");
-                        formBox.setVisible(true);
+                        machineBox.setVisible(true);
                     } else {
                         labelMessage.setStyle("-fx-text-fill: red;");
                         labelMessage.setText("Référence machine non trouvée.");
-                        formBox.setVisible(false);
+                        machineBox.setVisible(false);
                     }
                 } catch (IOException ex) {
                     labelMessage.setStyle("-fx-text-fill: red;");
                     labelMessage.setText("Erreur lecture fichier : " + ex.getMessage());
-                    formBox.setVisible(false);
+                    machineBox.setVisible(false);
                 }
             } else {
                 labelMessage.setStyle("-fx-text-fill: red;");
@@ -264,7 +286,7 @@ public class App extends Application {
             }
         });
 
-        valider.setOnAction(e -> {
+        validerMachine.setOnAction(e -> {
             try {
                 String refEquipement = tfRefMachine.getText().trim();
                 String dEquipement = tfDesiMachine.getText().trim();
@@ -315,7 +337,7 @@ public class App extends Application {
                 tfYMachine.clear();
                 tfCout.clear();
                 tfRefModif.clear();
-                formBox.setVisible(false);
+                machineBox.setVisible(false);
                 formModifBox.setVisible(false);
 
             } catch (NumberFormatException ex) {
@@ -327,7 +349,7 @@ public class App extends Application {
             }
         });
 
-        annuler.setOnAction(e -> {
+        annulerMachine.setOnAction(e -> {
             tfRefMachine.clear();
             tfDesiMachine.clear();
             tfTypeMachine.clear();
@@ -336,7 +358,7 @@ public class App extends Application {
             tfCout.clear();
             tfRefModif.clear();
             labelMessage.setText("");
-            formBox.setVisible(false);
+            machineBox.setVisible(false);
             formModifBox.setVisible(false);
             boitefiable.setVisible(false);
         });
