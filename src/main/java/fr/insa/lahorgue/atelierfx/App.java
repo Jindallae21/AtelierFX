@@ -161,6 +161,8 @@ public class App extends Application {
         affichageBoxPoste.setAlignment(Pos.CENTER);
         affichageBoxPoste.setStyle("-fx-padding: 20;");
         affichageBoxPoste.setVisible(false);
+        
+        //définition des menus
 
         MenuBar menuBar = new MenuBar();
         Menu menufiable = new Menu("Rapport de fiabilité");
@@ -211,6 +213,18 @@ public class App extends Application {
             boitefiable.setVisible(false);
             labelMessage.setText("");
         });
+        
+        menuItem2.setOnAction(e -> {
+            
+            machineBox.setVisible(false);
+            formModifBoxMachine.setVisible(false);
+            affichageBoxMachine.setVisible(false);
+            posteBox.setVisible(true);
+            formModifBoxPoste.setVisible(false);
+            affichageBoxPoste.setVisible(false);
+            boitefiable.setVisible(false);
+            labelMessage.setText("");
+        });
 
         // Action du bouton rapport de fiabilité
         affichagefiable.setOnAction(e -> {
@@ -218,6 +232,9 @@ public class App extends Application {
             machineBox.setVisible(false);
             formModifBoxMachine.setVisible(false);
             affichageBoxMachine.setVisible(false);
+            posteBox.setVisible(false);
+            formModifBoxPoste.setVisible(false);
+            affichageBoxPoste.setVisible(false);
         });
 
         menuItemAfficherSupprimerMachine.setOnAction(e -> {
@@ -225,6 +242,9 @@ public class App extends Application {
             formModifBoxMachine.setVisible(false);
             boitefiable.setVisible(false);
             affichageBoxMachine.setVisible(true);
+            posteBox.setVisible(false);
+            formModifBoxPoste.setVisible(false);
+            affichageBoxPoste.setVisible(false);
             scrollPane.setVisible(true);
             ligneContainer.getChildren().clear();
 
@@ -263,6 +283,9 @@ public class App extends Application {
             boitefiable.setVisible(false);
             affichageBoxMachine.setVisible(true);
             scrollPane.setVisible(true);
+            posteBox.setVisible(true);
+            formModifBoxPoste.setVisible(false);
+            affichageBoxPoste.setVisible(true);
             ligneContainer.getChildren().clear();
 
             try {
@@ -294,11 +317,24 @@ public class App extends Application {
         });
 
         btnSupprimerMachine.setOnAction(e -> {
-            String motCle = tfMotCleSuppressionMachine.getText().trim();
-            if (!motCle.isEmpty()) {
+            String motCleMachine = tfMotCleSuppressionMachine.getText().trim();
+            if (!motCleMachine.isEmpty()) {
                 try {
-                    Utile.supprimerLigne(cheminFichier, motCle);
+                    Utile.supprimerLigne(cheminFichier, motCleMachine);
                     menuItemAfficherSupprimerMachine.fire();
+                } catch (IOException ex) {
+                    ligneContainer.getChildren().clear();
+                    ligneContainer.getChildren().add(new Label("Erreur lors de la suppression : " + ex.getMessage()));
+                }
+            }
+        });
+        
+        btnSupprimerPoste.setOnAction(e -> {
+            String motClePoste = tfMotCleSuppressionPoste.getText().trim();
+            if (!motClePoste.isEmpty()) {
+                try {
+                    Utile.supprimerLigne(cheminFichier, motClePoste);
+                    menuItemAfficherSupprimerPoste.fire();
                 } catch (IOException ex) {
                     ligneContainer.getChildren().clear();
                     ligneContainer.getChildren().add(new Label("Erreur lors de la suppression : " + ex.getMessage()));
@@ -310,6 +346,20 @@ public class App extends Application {
             affichageBoxMachine.setVisible(false);
             machineBox.setVisible(false);
             formModifBoxMachine.setVisible(true);
+            posteBox.setVisible(true);
+            formModifBoxPoste.setVisible(false);
+            affichageBoxPoste.setVisible(false);
+            boitefiable.setVisible(false);
+            labelMessage.setText("");
+        });
+        
+        menuItemModifierPoste.setOnAction(e -> {
+            affichageBoxMachine.setVisible(false);
+            machineBox.setVisible(false);
+            formModifBoxMachine.setVisible(true);
+            posteBox.setVisible(true);
+            formModifBoxPoste.setVisible(true);
+            affichageBoxPoste.setVisible(false);
             boitefiable.setVisible(false);
             labelMessage.setText("");
         });
@@ -352,6 +402,46 @@ public class App extends Application {
             }
         });
 
+        btnChargerModifPoste.setOnAction(e -> {
+            String refCiblePoste = tfRefModifMachine.getText().trim();
+            if (!refCiblePoste.isEmpty()) {
+                try {
+                    List<Poste> postes = Poste.chargerPostesDepuisFichier(cheminFichier);
+                    Poste posteTrouvee = null;
+                    for (Poste p : postes) {
+                        if (p.getRefEquipement().equals(refCiblePoste)) {
+                            posteTrouvee = p;
+                            break;
+                        }
+                    }
+                    if (posteTrouvee != null) {
+                        // Remplir les champs avec les valeurs trouvées
+                        tfRefPoste.setText(posteTrouvee.getRefEquipement());
+                        tfDesiPoste.setText(posteTrouvee.getDesignation());
+                        int i;
+                        String listemachines = "";
+                        for (i=0;i<posteTrouvee.getListeMachines().size();i++){
+                           listemachines = listemachines + posteTrouvee.getListeMachines().get(i)+" ; ";
+                        }
+                        tfListeMachine.setText(listemachines);
+                        labelMessage.setText("Poste chargé, modifiez les champs et cliquez sur Valider.");
+                        posteBox.setVisible(true);
+                    } else {
+                        labelMessage.setStyle("-fx-text-fill: red;");
+                        labelMessage.setText("Référence poste non trouvée.");
+                        posteBox.setVisible(false);
+                    }
+                } catch (IOException ex) {
+                    labelMessage.setStyle("-fx-text-fill: red;");
+                    labelMessage.setText("Erreur lecture fichier : " + ex.getMessage());
+                    posteBox.setVisible(false);
+                }
+            } else {
+                labelMessage.setStyle("-fx-text-fill: red;");
+                labelMessage.setText("Veuillez entrer une référence.");
+            }
+        });
+        
         validerMachine.setOnAction(e -> {
             try {
                 String refEquipement = tfRefMachine.getText().trim();
@@ -414,7 +504,62 @@ public class App extends Application {
                 labelMessage.setText("Erreur lors de l'écriture dans le fichier : " + ex.getMessage());
             }
         });
+        
+        validerPoste.setOnAction(e -> {
+            try {
+                String refEquipementPoste = tfRefPoste.getText().trim();
+                String dEquipementPoste= tfDesiPoste.getText().trim();
+                ArrayList<Machine> listemachine = new ArrayList<Machine>(Machine.chargerMachinesDepuisFichier(cheminFichier));
+                String listemachinestring = "";
+                int i;
+                for (i=0;i<listemachine.size();i++) {
+                    listemachinestring = listemachinestring + listemachine.get(i).getDesignation() + ";";
+                }                      
+                Poste poste = new Poste(listemachine, refEquipementPoste, dEquipementPoste);
 
+                // Vérifier si le poste existe déjà
+                List<Poste> postes = Poste.chargerPostesDepuisFichier(cheminFichier);
+                boolean existe = false;
+                for (Poste p : postes) {
+                    if (p.getRefEquipement().equals(refEquipementPoste)) {
+                        existe = true;
+                        break;
+                    }
+                }
+
+                if (existe) {
+                    // Modifier le poste dans le fichier (remplacer ligne)
+                    // On va utiliser une méthode Utile.modifierElement pour chaque colonne
+                    // Format fichier : ref;designation;listemachine
+
+                    Utile.modifierElement(cheminFichier, refEquipementPoste, 0, refEquipementPoste);
+                    Utile.modifierElement(cheminFichier, refEquipementPoste, 1, dEquipementPoste);
+                    Utile.modifierElement(cheminFichier, refEquipementPoste, 2, listemachinestring);
+
+                    labelMessage.setStyle("-fx-text-fill: green;");
+                    labelMessage.setText("Machine modifiée avec succès.");
+                } else {
+                    // Ajouter le nouveau poste
+                    Utile.ajouterLigne(cheminFichier, poste.toList());
+                    labelMessage.setStyle("-fx-text-fill: green;");
+                    labelMessage.setText("Machine ajoutée avec succès.");
+                }
+
+                // Reset formulaire et cacher la zone modif
+                tfRefPoste.clear();
+                tfDesiPoste.clear();
+                tfListeMachine.clear();
+                posteBox.setVisible(false);
+                formModifBoxPoste.setVisible(false);
+
+            } catch (NumberFormatException ex) {
+                labelMessage.setStyle("-fx-text-fill: red;");
+                labelMessage.setText("Erreur : Vérifiez les valeurs numériques.");
+            } catch (IOException ex) {
+                labelMessage.setStyle("-fx-text-fill: red;");
+                labelMessage.setText("Erreur lors de l'écriture dans le fichier : " + ex.getMessage());
+            }
+        });
         annulerMachine.setOnAction(e -> {
             tfRefMachine.clear();
             tfDesiMachine.clear();
