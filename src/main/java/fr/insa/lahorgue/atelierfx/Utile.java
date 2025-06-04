@@ -48,7 +48,7 @@ public class Utile {
      * Ajoute une ligne (liste de colonnes) à un fichier texte.
      * Crée le fichier et le dossier parent si nécessaire.
      *
-     * @param cheminFichier chemin complet vers le fichier
+     * @param cheminFichier chemin compl et vers le fichier
      * @param colonnes liste des valeurs à écrire séparées par des virgules
      * @throws IOException en cas d'erreur d'écriture
      */
