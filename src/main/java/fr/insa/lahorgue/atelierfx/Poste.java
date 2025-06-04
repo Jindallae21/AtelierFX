@@ -84,6 +84,7 @@ public class Poste extends Equipement {
         return sb.toString();
     }
 
+    @Override
     public float calculCout() {
         float couttotal = 0;
         for (Machine m : listeMachines) {
