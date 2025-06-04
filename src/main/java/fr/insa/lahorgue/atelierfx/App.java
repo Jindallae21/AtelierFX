@@ -245,6 +245,7 @@ public class App extends Application {
             formModifBoxMachine.setVisible(false);
             boitefiable.setVisible(false);
             affichageBoxMachine.setVisible(true);
+            
             posteBox.setVisible(false);
             formModifBoxPoste.setVisible(false);
             affichageBoxPoste.setVisible(false);
