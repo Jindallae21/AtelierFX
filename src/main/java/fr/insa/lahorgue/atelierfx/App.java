@@ -107,39 +107,69 @@ public class App extends Application {
         scrollPane.setPrefHeight(300);
         scrollPane.setVisible(false);
 
-        TextField tfMotCleSuppression = new TextField();
-        tfMotCleSuppression.setPromptText("Référence de la machine");
-        tfMotCleSuppression.setStyle(textFieldStyle);
-        Button btnSupprimer = new Button("Supprimer");
-        btnSupprimer.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-font-weight: bold;");
-        HBox suppressionBox = new HBox(10, tfMotCleSuppression, btnSupprimer);
-        suppressionBox.setAlignment(Pos.CENTER);
-        suppressionBox.setVisible(false);
+        TextField tfMotCleSuppressionMachine = new TextField();
+        tfMotCleSuppressionMachine.setPromptText("Référence de la machine");
+        tfMotCleSuppressionMachine.setStyle(textFieldStyle);
+        Button btnSupprimerMachine = new Button("Supprimer");
+        btnSupprimerMachine.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-font-weight: bold;");
+        HBox suppressionBoxMachine = new HBox(10, tfMotCleSuppressionMachine, btnSupprimerMachine);
+        suppressionBoxMachine.setAlignment(Pos.CENTER);
+        suppressionBoxMachine.setVisible(false);
+        
+        TextField tfMotCleSuppressionPoste = new TextField();
+        tfMotCleSuppressionPoste.setPromptText("Référence de la machine");
+        tfMotCleSuppressionPoste.setStyle(textFieldStyle);
+        Button btnSupprimerPoste = new Button("Supprimer");
+        btnSupprimerPoste.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-font-weight: bold;");
+        HBox suppressionBoxPoste = new HBox(10, tfMotCleSuppressionPoste, btnSupprimerPoste);
+        suppressionBoxPoste.setAlignment(Pos.CENTER);
+        suppressionBoxPoste.setVisible(false);
 
-        // Zone pour modification
-        TextField tfRefModif = new TextField();
-        tfRefModif.setPromptText("Référence machine à modifier");
-        tfRefModif.setStyle(textFieldStyle);
+        // Zone pour modification machine et poste
+        TextField tfRefModifMachine = new TextField();
+        tfRefModifMachine.setPromptText("Référence machine à modifier");
+        tfRefModifMachine.setStyle(textFieldStyle);
 
-        Button btnChargerModif = new Button("Charger");
-        btnChargerModif.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;");
+        Button btnChargerModifMachine = new Button("Charger");
+        btnChargerModifMachine.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;");
 
-        VBox formModifBox = new VBox(10, tfRefModif, btnChargerModif, machineBox);
-        formModifBox.setAlignment(Pos.CENTER);
-        formModifBox.setStyle("-fx-padding: 20;");
-        formModifBox.setVisible(false);
+        VBox formModifBoxMachine = new VBox(10, tfRefModifMachine, btnChargerModifMachine, machineBox);
+        formModifBoxMachine.setAlignment(Pos.CENTER);
+        formModifBoxMachine.setStyle("-fx-padding: 20;");
+        formModifBoxMachine.setVisible(false);
 
-        VBox affichageBox = new VBox(10, scrollPane, suppressionBox);
-        affichageBox.setAlignment(Pos.CENTER);
-        affichageBox.setStyle("-fx-padding: 20;");
-        affichageBox.setVisible(false);
+        VBox affichageBoxMachine = new VBox(10, scrollPane, suppressionBoxMachine);
+        affichageBoxMachine.setAlignment(Pos.CENTER);
+        affichageBoxMachine.setStyle("-fx-padding: 20;");
+        affichageBoxMachine.setVisible(false);
+        
+        //Partie Poste
+        
+        TextField tfRefModifPoste = new TextField();
+        tfRefModifPoste.setPromptText("Référence post à modifier");
+        tfRefModifPoste.setStyle(textFieldStyle);
+
+        Button btnChargerModifPoste = new Button("Charger");
+        btnChargerModifPoste.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        VBox formModifBoxPoste = new VBox(10, tfRefModifMachine, btnChargerModifMachine, machineBox);
+        formModifBoxPoste.setAlignment(Pos.CENTER);
+        formModifBoxPoste.setStyle("-fx-padding: 20;");
+        formModifBoxPoste.setVisible(false);
+
+        VBox affichageBoxPoste = new VBox(10, scrollPane, suppressionBoxMachine);
+        affichageBoxPoste.setAlignment(Pos.CENTER);
+        affichageBoxPoste.setStyle("-fx-padding: 20;");
+        affichageBoxPoste.setVisible(false);
 
         MenuBar menuBar = new MenuBar();
         Menu menufiable = new Menu("Rapport de fiabilité");
+        
         Menu menu1 = new Menu("Machine");
         MenuItem menuItem1 = new MenuItem("Ajouter");
         MenuItem menuItemAfficherSupprimerMachine = new MenuItem("Afficher/Supprimer");
         MenuItem menuItemModifierMachine = new MenuItem("Afficher/Modifier");
+        
         Menu menu2 = new Menu("Poste");
         MenuItem menuItem2 = new MenuItem("Ajouter");
         MenuItem menuItemAfficherSupprimerPoste = new MenuItem("Afficher/Supprimer");
@@ -149,7 +179,7 @@ public class App extends Application {
         menu2.getItems().addAll(menuItem2, menuItemAfficherSupprimerPoste, menuItemModifierPoste);
         menuBar.getMenus().addAll(menu1, menu2, new Menu("Produit"), new Menu("Gamme"), menufiable);
         
-        //BOuton rapport de fiabilité
+        //Bouton rapport de fiabilité
         MenuItem affichagefiable = new MenuItem("Afficher le rapport");
         menufiable.getItems().add(affichagefiable);
         Fiabilite instancefiable = new Fiabilite();
@@ -176,8 +206,8 @@ public class App extends Application {
 
         menuItem1.setOnAction(e -> {
             machineBox.setVisible(true);
-            formModifBox.setVisible(false);
-            affichageBox.setVisible(false);
+            formModifBoxMachine.setVisible(false);
+            affichageBoxMachine.setVisible(false);
             boitefiable.setVisible(false);
             labelMessage.setText("");
         });
@@ -186,15 +216,15 @@ public class App extends Application {
         affichagefiable.setOnAction(e -> {
             boitefiable.setVisible(true);
             machineBox.setVisible(false);
-            formModifBox.setVisible(false);
-            affichageBox.setVisible(false);
+            formModifBoxMachine.setVisible(false);
+            affichageBoxMachine.setVisible(false);
         });
 
         menuItemAfficherSupprimerMachine.setOnAction(e -> {
             machineBox.setVisible(false);
-            formModifBox.setVisible(false);
+            formModifBoxMachine.setVisible(false);
             boitefiable.setVisible(false);
-            affichageBox.setVisible(true);
+            affichageBoxMachine.setVisible(true);
             scrollPane.setVisible(true);
             ligneContainer.getChildren().clear();
 
@@ -221,14 +251,50 @@ public class App extends Application {
                     ligneHBox.getChildren().addAll(labelRef, labelDesi, labelType, labelX, labelY, labelCout);
                     ligneContainer.getChildren().add(ligneHBox);
                 }
-                suppressionBox.setVisible(true);
+                suppressionBoxMachine.setVisible(true);
+            } catch (IOException ex) {
+                ligneContainer.getChildren().add(new Label("Erreur lors de la lecture du fichier : " + ex.getMessage()));
+            }
+        });
+        
+        menuItemAfficherSupprimerPoste.setOnAction(e -> {
+            machineBox.setVisible(false);
+            formModifBoxMachine.setVisible(false);
+            boitefiable.setVisible(false);
+            affichageBoxMachine.setVisible(true);
+            scrollPane.setVisible(true);
+            ligneContainer.getChildren().clear();
+
+            try {
+                List<Poste> postes = Poste.chargerPostesDepuisFichier(cheminFichier);
+
+                for (Poste poste : postes) {
+                    HBox ligneHBox = new HBox(20);
+
+                    Label labelRefPoste = new Label(poste.getRefEquipement());
+                    Label labelDesiPoste = new Label(poste.getDesignation());
+                    int i;
+                    String listemachine = "";
+                    for (i=0;i<poste.getListeMachines().size();i++ ) {
+                        listemachine = listemachine + poste.getListeMachines().get(i)+" " ;
+                    }
+                    Label labelListeMachine = new Label(listemachine);
+
+                    labelRefPoste.setMinWidth(150);
+                    labelDesiPoste.setMinWidth(150);
+                    labelListeMachine.setMinWidth(150);
+
+                    ligneHBox.getChildren().addAll(labelRefPoste, labelDesiPoste, labelListeMachine);
+                    ligneContainer.getChildren().add(ligneHBox);
+                }
+                suppressionBoxMachine.setVisible(true);
             } catch (IOException ex) {
                 ligneContainer.getChildren().add(new Label("Erreur lors de la lecture du fichier : " + ex.getMessage()));
             }
         });
 
-        btnSupprimer.setOnAction(e -> {
-            String motCle = tfMotCleSuppression.getText().trim();
+        btnSupprimerMachine.setOnAction(e -> {
+            String motCle = tfMotCleSuppressionMachine.getText().trim();
             if (!motCle.isEmpty()) {
                 try {
                     Utile.supprimerLigne(cheminFichier, motCle);
@@ -241,15 +307,15 @@ public class App extends Application {
         });
 
         menuItemModifierMachine.setOnAction(e -> {
-            affichageBox.setVisible(false);
+            affichageBoxMachine.setVisible(false);
             machineBox.setVisible(false);
-            formModifBox.setVisible(true);
+            formModifBoxMachine.setVisible(true);
             boitefiable.setVisible(false);
             labelMessage.setText("");
         });
 
-        btnChargerModif.setOnAction(e -> {
-            String refCible = tfRefModif.getText().trim();
+        btnChargerModifMachine.setOnAction(e -> {
+            String refCible = tfRefModifMachine.getText().trim();
             if (!refCible.isEmpty()) {
                 try {
                     List<Machine> machines = Machine.chargerMachinesDepuisFichier(cheminFichier);
@@ -336,9 +402,9 @@ public class App extends Application {
                 tfXMachine.clear();
                 tfYMachine.clear();
                 tfCout.clear();
-                tfRefModif.clear();
+                tfRefModifMachine.clear();
                 machineBox.setVisible(false);
-                formModifBox.setVisible(false);
+                formModifBoxMachine.setVisible(false);
 
             } catch (NumberFormatException ex) {
                 labelMessage.setStyle("-fx-text-fill: red;");
@@ -356,14 +422,14 @@ public class App extends Application {
             tfXMachine.clear();
             tfYMachine.clear();
             tfCout.clear();
-            tfRefModif.clear();
+            tfRefModifMachine.clear();
             labelMessage.setText("");
             machineBox.setVisible(false);
-            formModifBox.setVisible(false);
+            formModifBoxMachine.setVisible(false);
             boitefiable.setVisible(false);
         });
 
-        VBox mainContent = new VBox(20, boitefiable, formModifBox, affichageBox);
+        VBox mainContent = new VBox(20, boitefiable, formModifBoxMachine, affichageBoxMachine);
         mainContent.setAlignment(Pos.CENTER);
 
         BorderPane root = new BorderPane();
