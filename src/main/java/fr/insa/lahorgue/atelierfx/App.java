@@ -210,6 +210,9 @@ public class App extends Application {
             machineBox.setVisible(true);
             formModifBoxMachine.setVisible(false);
             affichageBoxMachine.setVisible(false);
+            posteBox.setVisible(false);
+            formModifBoxPoste.setVisible(false);
+            affichageBoxPoste.setVisible(false);
             boitefiable.setVisible(false);
             labelMessage.setText("");
         });
