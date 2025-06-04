@@ -574,7 +574,7 @@ public class App extends Application {
             boitefiable.setVisible(false);
         });
 
-        VBox mainContent = new VBox(20, boitefiable, formModifBoxMachine, affichageBoxMachine);
+        VBox mainContent = new VBox(20, boitefiable, machineBox, posteBox, formModifBoxMachine, affichageBoxMachine, formModifBoxPoste, affichageBoxPoste);
         mainContent.setAlignment(Pos.CENTER);
 
         BorderPane root = new BorderPane();
